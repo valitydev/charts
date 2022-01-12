@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: chop-vault-clusterapi-egress
+  namespace: {{ .Values.processingNamespace | default .Release.Namespace }}
+specs:
+  - egress:
+    - toEntities:
+      - remote-node
+    - toServices:
+      - k8sService:
+          namespace: default
+          serviceName: kubernetes
+    endpointSelector:
+      matchLabels:
+        k8s:selector.cilium/release: clickhouse-operator
+  - egress:
+    - toEntities:
+      - remote-node
+    - toServices:
+      - k8sService:
+          namespace: default
+          serviceName: kubernetes
+    endpointSelector:
+      matchLabels:
+        k8s:selector.cilium/release: vault
+

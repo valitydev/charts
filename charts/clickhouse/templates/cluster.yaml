@@ -1,0 +1,121 @@
+apiVersion: "clickhouse.altinity.com/v1"
+kind: "ClickHouseInstallation"
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  defaults:
+    replicasUseFQDN: {{ .Values.replicasUseFQDN | quote }}
+    templates:
+      serviceTemplate: ch-without-lb
+  configuration:
+    {{- if .Values.zookeeper }}
+    zookeeper:
+      nodes:
+      {{- with .Values.zookeeper }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- end }}
+
+    clusters:
+      - name: {{ .Values.clusterName }}
+        templates:
+          podTemplate: pod-template-with-volumes
+        layout:
+          shardsCount: {{ .Values.shardsCount }}
+          replicasCount: {{ .Values.replicasCount }}
+    users:
+      {{- range .Values.users }}
+      {{ .username }}/password: {{ .password }}
+      {{ .username }}/profile: {{ .profile }}
+      {{ .username }}/networks/ip:
+        {{- range $network := .networks }}
+        - {{ $network }}
+        {{- end }}
+      {{ .username }}/allow_databases/database:
+        {{- range $database := .databases }}
+        - {{ $database }}
+        {{- end }}
+      {{- end }}
+
+  templates:
+    serviceTemplates:
+      - name: ch-without-lb
+        # generateName understands different sets of macroses,
+        # depending on the level of the object, for which Service is being created:
+        #
+        # For CHI-level Service:
+        # 1. {chi} - ClickHouseInstallation name
+        # 2. {chiID} - short hashed ClickHouseInstallation name (BEWARE, this is an experimental feature)
+        #
+        # For Cluster-level Service:
+        # 1. {chi} - ClickHouseInstallation name
+        # 2. {chiID} - short hashed ClickHouseInstallation name (BEWARE, this is an experimental feature)
+        # 3. {cluster} - cluster name
+        # 4. {clusterID} - short hashed cluster name (BEWARE, this is an experimental feature)
+        # 5. {clusterIndex} - 0-based index of the cluster in the CHI (BEWARE, this is an experimental feature)
+        #
+        # For Shard-level Service:
+        # 1. {chi} - ClickHouseInstallation name
+        # 2. {chiID} - short hashed ClickHouseInstallation name (BEWARE, this is an experimental feature)
+        # 3. {cluster} - cluster name
+        # 4. {clusterID} - short hashed cluster name (BEWARE, this is an experimental feature)
+        # 5. {clusterIndex} - 0-based index of the cluster in the CHI (BEWARE, this is an experimental feature)
+        # 6. {shard} - shard name
+        # 7. {shardID} - short hashed shard name (BEWARE, this is an experimental feature)
+        # 8. {shardIndex} - 0-based index of the shard in the cluster (BEWARE, this is an experimental feature)
+        #
+        # For Replica-level Service:
+        # 1. {chi} - ClickHouseInstallation name
+        # 2. {chiID} - short hashed ClickHouseInstallation name (BEWARE, this is an experimental feature)
+        # 3. {cluster} - cluster name
+        # 4. {clusterID} - short hashed cluster name (BEWARE, this is an experimental feature)
+        # 5. {clusterIndex} - 0-based index of the cluster in the CHI (BEWARE, this is an experimental feature)
+        # 6. {shard} - shard name
+        # 7. {shardID} - short hashed shard name (BEWARE, this is an experimental feature)
+        # 8. {shardIndex} - 0-based index of the shard in the cluster (BEWARE, this is an experimental feature)
+        # 9. {replica} - replica name
+        # 10. {replicaID} - short hashed replica name (BEWARE, this is an experimental feature)
+        # 11. {replicaIndex} - 0-based index of the replica in the shard (BEWARE, this is an experimental feature)
+        generateName: "{chi}"
+        # type ObjectMeta struct from k8s.io/meta/v1
+        metadata:
+          labels:
+            selector.cilium/release: {{ .Release.Name }}
+        # type ServiceSpec struct from k8s.io/core/v1
+        spec:
+          ports:
+            - name: http
+              port: 8123
+            - name: client
+              port: 9000
+          type: ClusterIP
+    podTemplates:
+      - name: pod-template-with-volumes
+        metadata:
+          labels:
+            selector.cilium/release: {{ .Release.Name }}
+          annotations:
+            custom.annotation: "annotation.value"
+        spec:
+          containers:
+            - name: clickhouse
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              resources:
+                {{- toYaml .Values.resources | nindent 16 }} 
+            {{- with .Values.volumeMounts }}
+              volumeMounts:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+          volumes:
+            - name: schema-bootstrap-volume
+              configMap:
+                name: {{ include "clickhouse.fullname" . }}
+        {{- with .Values.volumes }}
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+  {{- with .Values.volumeClaimTemplates }}
+    volumeClaimTemplates:
+      {{- toYaml . | nindent 6 }}
+  {{- end }}

@@ -1,0 +1,59 @@
+# Default values for clickhouse.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+clusterName: "cluster"
+shardsCount: 1
+replicasCount: 1
+
+replicasUseFQDN: "no"
+
+image:
+  repository: yandex/clickhouse-server
+  tag: 19.17
+  pullPolicy: IfNotPresent
+
+zookeeper: []
+
+
+resources: {}
+#  resources: 
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+users: []    
+
+volumeMounts:
+  - name: data-storage-vc-template
+    mountPath: /var/lib/clickhouse
+  - name: log-storage-vc-template
+    mountPath: /var/log/clickhouse-server
+  - name: schema-bootstrap-volume
+    mountPath: /docker-entrypoint-initdb.d
+    readOnly: true
+
+volumes: []
+
+volumeClaimTemplates:
+  - name: data-storage-vc-template
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 3Gi
+  - name: log-storage-vc-template
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 2Gi  
+
+configMap: {}
+
+ciliumPolicies: {}

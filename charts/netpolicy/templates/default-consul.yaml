@@ -1,0 +1,21 @@
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: default.consul
+  namespace: {{ .Values.processingNamespace | default .Release.Namespace }}
+specs:
+  - endpointSelector:
+      matchLabels:
+        k8s:selector.cilium/release: consul
+    egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:selector.cilium/release: machinegun
+  - endpointSelector:
+      matchLabels:
+        k8s:selector.cilium/release: machinegun
+    ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:selector.cilium/release: consul

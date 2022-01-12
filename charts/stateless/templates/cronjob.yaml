@@ -1,0 +1,33 @@
+{{- if .Values.cronjob.enabled }}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "stateless.fullname" . }}-cj
+  labels:
+    {{- include "stateless.labels" . | nindent 4 }}
+spec:
+  schedule: "{{ .Values.cronjob.schedule }}"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            selector.cilium/release: {{ .Release.Name }}
+            {{- include "stateless.labels" . | nindent 12 }}
+        spec:
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "stateless.serviceAccountName" . }}
+          containers:
+            - name: {{ .Release.Name }}-cj
+              image: "{{ .Values.cronjob.image.repository }}:{{ .Values.cronjob.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.cronjob.image.pullPolicy }}
+              args:
+                {{- toYaml .Values.cronjob.args | nindent 16 }}
+          restartPolicy: OnFailure
+{{- end }}

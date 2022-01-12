@@ -1,0 +1,6 @@
+{{- if .Values.configmap }}
+Configmap {{ .Release.Name }} created in {{ .Release.Namespace }} namespace
+{{- end }}
+{{- if .Values.secret }}
+Secret {{ .Release.Name }} created in {{ .Release.Namespace }} namespace
+{{- end }}

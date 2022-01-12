@@ -1,0 +1,26 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: {{ .Values.elastic.nameref }}
+spec:
+  version: {{ .Chart.AppVersion }}
+  nodeSets:
+  - name: master
+    count: {{ .Values.elastic.master.replicas  }}
+    config:
+      node.roles:
+        - master
+      node.store.allow_mmap: false
+    podTemplate:
+      {{- toYaml .Values.elastic.master.podTemplate | nindent 6 }}
+  - name: data
+    count: {{ .Values.elastic.data.replicas }}
+    config:
+      node.roles:
+        - data
+        - ingest
+      node.store.allow_mmap: false
+    podTemplate:
+      {{- toYaml .Values.elastic.data.podTemplate | nindent 6 }}
+    volumeClaimTemplates:
+      {{- toYaml .Values.elastic.data.volumeTemplate | nindent 6 }}
