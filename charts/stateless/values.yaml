@@ -23,7 +23,8 @@ podSecurityContext: {}
 podAnnotations: {}
 
 configMap: {}
-#  data: ""
+#  data: {}
+#  binaryData: {}
 
 secret: {}
 #  data: ""

@@ -3,7 +3,8 @@
 # Declare variables to be passed into your templates.
 
 configMap: {}
-#  data: ""
+#  data: {}
+#  binaryData: {}
 
 secret: {}
 #  data: ""
