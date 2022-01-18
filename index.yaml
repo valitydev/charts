@@ -10,4 +10,34 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/elk-0.1.11/elk-0.1.11.tgz
     version: 0.1.11
+  raw:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2022-01-18T14:26:30.723142083Z"
+    description: A Helm chart for configmaps and secrets usefull for vality services
+    digest: e007dcfe5c9570eb7b74f940d83a627ab2fbfa94d02643056df35cd192956412
+    name: raw
+    urls:
+    - https://github.com/valitydev/charts/releases/download/raw-1.0.1/raw-1.0.1.tgz
+    version: 1.0.1
+  statefull:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2022-01-18T14:26:30.90572896Z"
+    description: A Helm chart for statefull vality services
+    digest: b8faee1b0b11cc3a77e02066a1bd4303a4489a04e5a5d4226d2c7d265904094b
+    name: statefull
+    urls:
+    - https://github.com/valitydev/charts/releases/download/statefull-1.0.1/statefull-1.0.1.tgz
+    version: 1.0.1
+  stateless:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2022-01-18T14:26:31.065458014Z"
+    description: A Helm chart for stateless vality services
+    digest: 515e35496fc687cfcdb42448caf027900f7f84a5d8422256fb3189b7e35b0550
+    name: stateless
+    urls:
+    - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
+    version: 1.0.1
 generated: "2022-01-18T10:23:40.787363048Z"
