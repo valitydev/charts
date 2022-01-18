@@ -33,7 +33,7 @@ spec:
     setup:
       ilm:
         enabled: true
-        overwrite: true
+        overwrite: {{ .Values.filebeat.ilm.overwrite | default false }}
         rollover_alias: filebeat-rbkmoney-processing # должно совпадать с полем в files/filebeat-index-template.json
         policy_file: "/mnt/rbkmoney/ilm-policy.json"
         policy_name: "filebeat-rbkmoney-processing-ilm-policy"

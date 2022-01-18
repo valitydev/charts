@@ -11,7 +11,6 @@ metricbeat:
 filebeat:
   enabled: true
 
-
 elastic:
   nameref: "rbkmoney"
   master:
@@ -22,10 +21,10 @@ elastic:
     volumeTemplate: {}
     podTemplate: {}
     retention:
-      rollover: 2
-      warm: 4
-      delete: 24
-    
+      rollover: 20h
+      warm: 2d
+      delete: 31d
+
 kibana:
   nameref: "rbkmoney"
 
