@@ -8,4 +8,6 @@ metadata:
     {{- include "raw.labels" . | nindent 4 }}
 data:
   {{ toYaml .Values.configMap.data | nindent 2 }}
+binaryData:
+  {{ toYaml .Values.configMap.binaryData | nindent 2 }}
 {{- end }}
