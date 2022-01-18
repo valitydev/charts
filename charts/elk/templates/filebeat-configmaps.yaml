@@ -16,7 +16,7 @@ data:
              "min_age": "0ms",
              "actions": {
                "rollover": {
-                 "max_age": "{{ .Values.elastic.data.retention.rollover }}h"
+                 "max_age": "{{ .Values.elastic.data.retention.rollover }}"
                },
                "set_priority": {
                  "priority": 100
@@ -24,7 +24,7 @@ data:
              }
            },
            "warm": {
-             "min_age": "{{ .Values.elastic.data.retention.warm }}h",
+             "min_age": "{{ .Values.elastic.data.retention.warm }}",
              "actions": {
                "set_priority": {
                  "priority": null
@@ -32,7 +32,7 @@ data:
              }
            },
            "delete": {
-             "min_age": "{{ .Values.elastic.data.retention.delete }}h",
+             "min_age": "{{ .Values.elastic.data.retention.delete }}",
              "actions": {
                "delete": {
                  "delete_searchable_snapshot": true
