@@ -113,8 +113,8 @@ resources: {}
 hpa:
   enabled: false
   maxReplicas: 5
-  cpu: 70
-  memory: 80
+  cpu: 
+  memory: 
 
 nodeSelector: {}
 
