@@ -110,6 +110,10 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+hpa:
+  enabled: false
+  maxReplicas: 5
+
 nodeSelector: {}
 
 tolerations: []
