@@ -109,8 +109,6 @@ resources: {}
 hpa:
   enabled: false
   maxReplicas: 5
-  cpu:
-  memory:
 
 nodeSelector: {}
 
