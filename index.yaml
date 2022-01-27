@@ -1,5 +1,15 @@
 apiVersion: v1
 entries:
+  clickhouse-operator:
+  - apiVersion: v1
+    appVersion: "0.18"
+    created: "2022-01-27T17:48:26.944254999Z"
+    description: A Helm chart for clickhouse operator
+    digest: 3f0d6acf7e3f7a73cf84e7a985edb9f12f3228af0318272666e005efc811430e
+    name: clickhouse-operator
+    urls:
+    - https://github.com/valitydev/charts/releases/download/clickhouse-operator-0.1.4/clickhouse-operator-0.1.4.tgz
+    version: 0.1.4
   elk:
   - apiVersion: v1
     appVersion: 7.10.0
