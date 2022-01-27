@@ -2,7 +2,9 @@ kind: Service
 apiVersion: v1
 metadata:
   name: clickhouse-operator-metrics
+  namespace: {{ .Release.Namespace }}
   labels:
+    clickhouse.altinity.com/chop: {{ .Chart.AppVersion }}
     app: clickhouse-operator
 spec:
   ports:
