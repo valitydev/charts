@@ -1,17 +1,10 @@
-# Possible Template Parameters:
-#
-# kube-system
-# altinity/clickhouse-operator:0.14.0
-# altinity/metrics-exporter:0.14.0
-#
-# Setup Deployment for clickhouse-operator
-# Deployment would be created in kubectl-specified namespace
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: clickhouse-operator
   namespace: {{ .Release.Namespace }}
   labels:
+    clickhouse.altinity.com/chop: {{ .Chart.AppVersion }}
     app: clickhouse-operator
 {{ include "ch.labels" . | indent 4 }}
 spec:
@@ -47,7 +40,7 @@ spec:
             name: etc-clickhouse-operator-usersd-files
       containers:
         - name: clickhouse-operator
-          image: altinity/clickhouse-operator:0.16.0
+          image: altinity/clickhouse-operator:0.18.0
           imagePullPolicy: Always
           volumeMounts:
             - name: etc-clickhouse-operator-folder
@@ -72,7 +65,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            # metadata.namespace: {{ .Release.Namespace }}
+            # metadata.namespace: kube-system
             - name: OPERATOR_POD_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -88,7 +81,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.serviceAccountName
-
             # Container-specific
             - name: OPERATOR_CONTAINER_CPU_REQUEST
               valueFrom:
@@ -110,9 +102,8 @@ spec:
                 resourceFieldRef:
                   containerName: clickhouse-operator
                   resource: limits.memory
-
         - name: metrics-exporter
-          image: altinity/metrics-exporter:0.16.0
+          image: altinity/metrics-exporter:0.18.0
           imagePullPolicy: Always
           volumeMounts:
             - name: etc-clickhouse-operator-folder
@@ -125,3 +116,6 @@ spec:
               mountPath: /etc/clickhouse-operator/templates.d
             - name: etc-clickhouse-operator-usersd-folder
               mountPath: /etc/clickhouse-operator/users.d
+          ports:
+            - containerPort: 8888
+              name: metrics
