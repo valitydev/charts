@@ -4,7 +4,7 @@ metadata:
   name: clickhouse-operator
   namespace: {{ .Release.Namespace }}
   labels:
-    clickhouse.altinity.com/chop: {{ .Chart.AppVersion }}
+    clickhouse.altinity.com/chop: {{ .Chart.appVersion }}
     app: clickhouse-operator
 {{ include "ch.labels" . | indent 4 }}
 spec:
