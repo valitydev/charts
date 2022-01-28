@@ -10,7 +10,7 @@ replicasUseFQDN: "no"
 
 image:
   repository: yandex/clickhouse-server
-  tag: 19.17
+  tag: 21.3
   pullPolicy: IfNotPresent
 
 zookeeper: []
