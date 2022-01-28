@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  clickhouse:
+  - apiVersion: v2
+    appVersion: 1.18.0
+    created: "2022-01-28T09:15:39.499839694Z"
+    description: A Clickhouse-cluster Helm chart for Kubernetes
+    digest: 59ff03a2ad00a62270342581a0c14167f03aed8ff1685a21e78472494f623080
+    name: clickhouse
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/clickhouse-0.1.13/clickhouse-0.1.13.tgz
+    version: 0.1.13
   clickhouse-operator:
   - apiVersion: v1
     appVersion: "0.18"
