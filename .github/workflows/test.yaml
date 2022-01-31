@@ -22,5 +22,5 @@ jobs:
       - name: Run lint
         run: |
           for charts in $(ls charts); do
-          helm lint charts/$charts || true
+          helm lint charts/$charts
           done

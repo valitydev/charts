@@ -10,7 +10,8 @@ metricbeat:
   enabled: false
 filebeat:
   enabled: true
-
+  ilm:
+    overwrite: false
 elastic:
   nameref: "rbkmoney"
   master:
