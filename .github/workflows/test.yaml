@@ -20,8 +20,7 @@ jobs:
           version: v3.7.0
 
       - name: Run lint
-        continue-on-error: true
         run: |
           for charts in $(ls charts); do
-          helm lint charts/$charts
+          helm lint charts/$charts || true
           done
