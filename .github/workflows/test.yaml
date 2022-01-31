@@ -1,0 +1,26 @@
+name: Lint charts
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.4.0
+
+      - name: Run lint
+        run: |
+          for charts in $(ls charts); do
+          helm lint charts/$charts
+          done
