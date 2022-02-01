@@ -42,6 +42,15 @@ entries:
   elk:
   - apiVersion: v1
     appVersion: 7.10.0
+    created: "2022-02-01T09:14:33.220798102Z"
+    description: A Helm chart for logs
+    digest: 6e61eb912085659e244849919414e2d02343e4e94dd5a6d1e6b154ad23504d8a
+    name: elk
+    urls:
+    - https://github.com/valitydev/charts/releases/download/elk-0.1.12/elk-0.1.12.tgz
+    version: 0.1.12
+  - apiVersion: v1
+    appVersion: 7.10.0
     created: "2022-01-18T10:23:41.112374198Z"
     description: A Helm chart for logs
     digest: 73772bfd7b4f66111f27dc7eda280534dfe4c051f93d571341f68553a333adcf
