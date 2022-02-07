@@ -92,6 +92,7 @@ spec:
           type: ClusterIP
     podTemplates:
       - name: pod-template-with-volumes
+        distribution: {{ .Values.distribution | quote }}
         metadata:
           labels:
             selector.cilium/release: {{ .Release.Name }}

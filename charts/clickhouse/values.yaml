@@ -6,6 +6,11 @@ clusterName: "cluster"
 shardsCount: 1
 replicasCount: 1
 
+# Possible values for distribution are:
+# Unspecified
+# OnePerHost
+distribution: Unspecified
+
 replicasUseFQDN: "no"
 
 image:
