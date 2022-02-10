@@ -1,0 +1,17 @@
+---
+clusterName: "opensearch-cluster"
+
+securityConfigs:
+  enabled: true
+  config:
+    data: {}
+      # config.yml: |-
+      # internal_users.yml: |-
+      # roles.yml: |-
+      # roles_mapping.yml: |-
+      # action_groups.yml: |-
+      # tenants.yml: |-
+
+tls:
+  enabled: false
+  issuer: {}

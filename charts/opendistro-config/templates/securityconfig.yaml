@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ include "opensearch.uname" . }}-securityconfig
+  name: opensearch-{{ .Values.clusterName }}-securityconfig
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "opensearch.labels" . | nindent 4 }}
+    {{- include "opendistro.labels" . | nindent 4 }}
 type: Opaque
 stringData:
 {{- range $key, $val := .Values.securityConfig.config.data }}
