@@ -413,3 +413,6 @@ plugins:
   enabled: false
   installList: []
   # - example-fake-plugin
+
+tls:
+  enabled: false

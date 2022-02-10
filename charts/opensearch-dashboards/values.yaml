@@ -8,6 +8,8 @@
 opensearchHosts: "https://opensearch-cluster-master:9200"
 replicaCount: 1
 
+clusterName: "opensearch-clusters"
+
 image:
   repository: "opensearchproject/opensearch-dashboards"
   # override image tag, which is .Chart.AppVersion by default
@@ -160,3 +162,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+tls:
+  enabled: false
