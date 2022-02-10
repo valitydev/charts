@@ -1,0 +1,31 @@
+{{ if and .Values.tls.enabled .Values.tls.issuer }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.clusterName }}-tls-certs
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opensearch-dashboards.labels" . | nindent 4 }}
+spec:
+  # Secret names are always required.
+  secretName: {{ .Release.Name }}-{{ .Values.clusterName }}-tls-certs
+  duration: 8760h #365d
+  renewBefore: 360h #15d
+  # The use of the common name field has been deprecated since 2000 and is
+  # discouraged from being used.
+  commonName: {{ .Release.Name }}-{{ .Values.clusterName }}
+  isCA: false
+  privateKey:
+    encoding: PKCS8
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  # At least one of a DNS Name, URI, or IP address is required.
+  dnsNames:
+    - {{ .Release.Name }}.{{ .Release.Namespace }}.svc
+  # Issuer references are always required.
+  issuerRef:
+    name: {{ .Values.tls.issuer.name }}
+    kind: Issuer
+{{ end }}

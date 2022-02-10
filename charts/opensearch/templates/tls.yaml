@@ -1,0 +1,73 @@
+---
+{{ if and .Values.tls.enabled .Values.tls.issuer (eq .Values.nodeGroup "master") }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Values.tls.issuer.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opensearch.labels" . | nindent 4 }}
+spec:
+  ca:
+    secretName: {{ .Values.tls.issuer.secretName }}
+{{ end }}
+---
+{{ if and .Values.tls.enabled .Values.tls.issuer}}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.clusterName }}-tls-certs
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opensearch.labels" . | nindent 4 }}
+spec:
+  # Secret names are always required.
+  secretName: {{ .Release.Name }}-{{ .Values.clusterName }}-tls-certs
+  duration: 8760h #365d
+  renewBefore: 360h #15d
+  # The use of the common name field has been deprecated since 2000 and is
+  # discouraged from being used.
+  commonName: {{ .Release.Name }}-{{ .Values.clusterName }}
+  isCA: false
+  privateKey:
+    encoding: PKCS8
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  # At least one of a DNS Name, URI, or IP address is required.
+  dnsNames:
+    - opensearch-{{ .Values.clusterName }}-{{ .Values.nodeGroup }}.{{ .Release.Namespace }}.svc
+  # Issuer references are always required.
+  issuerRef:
+    name: {{ .Values.tls.issuer.name }}
+    kind: Issuer
+{{ end }}
+---
+{{ if and .Values.tls.enabled .Values.tls.issuer (eq .Values.nodeGroup "master") }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.clusterName }}-admin-cert
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opensearch.labels" . | nindent 4 }}
+spec:
+  # Secret names are always required.
+  secretName: {{ .Release.Name }}-{{ .Values.clusterName }}-admin-cert
+  duration: 8760h #365d
+  renewBefore: 360h #15d
+  # The use of the common name field has been deprecated since 2000 and is
+  # discouraged from being used.
+  commonName: {{ .Values.clusterName }}-admin
+  isCA: false
+  privateKey:
+    encoding: PKCS8
+    size: 2048
+  usages:
+    - client auth
+  # Issuer references are always required.
+  issuerRef:
+    name: {{ .Values.tls.issuer.name }}
+    kind: Issuer
+{{ end }}
