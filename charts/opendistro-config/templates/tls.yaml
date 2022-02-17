@@ -1,0 +1,66 @@
+{{ if and .Values.tls.enabled .Values.tls.issuer }}
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Values.tls.issuer.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opendistro.labels" . | nindent 4 }}
+spec:
+  ca:
+    secretName: {{ .Values.tls.issuer.secretName }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: opensearch-{{ .Values.clusterName }}-node-tls-certs
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opendistro.labels" . | nindent 4 }}
+spec:
+  # Secret names are always required.
+  secretName: opensearch-{{ .Values.clusterName }}-node-tls-certs
+  duration: 8760h #365d
+  renewBefore: 360h #15d
+  # The use of the common name field has been deprecated since 2000 and is
+  # discouraged from being used.
+  commonName: opensearch-{{ .Values.clusterName }}-node
+  isCA: false
+  privateKey:
+    encoding: PKCS8
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  # Issuer references are always required.
+  issuerRef:
+    name: {{ .Values.tls.issuer.name }}
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name:  opensearch-{{ .Values.clusterName }}-admin-cert
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opendistro.labels" . | nindent 4 }}
+spec:
+  # Secret names are always required.
+  secretName: opensearch-{{ .Values.clusterName }}-admin-cert
+  duration: 8760h #365d
+  renewBefore: 360h #15d
+  # The use of the common name field has been deprecated since 2000 and is
+  # discouraged from being used.
+  commonName: {{ .Values.clusterName }}-admin
+  isCA: false
+  privateKey:
+    encoding: PKCS8
+    size: 2048
+  usages:
+    - client auth
+  # Issuer references are always required.
+  issuerRef:
+    name: {{ .Values.tls.issuer.name }}
+    kind: Issuer
+{{ end }}

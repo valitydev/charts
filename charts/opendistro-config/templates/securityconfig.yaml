@@ -1,0 +1,15 @@
+{{- if .Values.securityConfig.data -}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: opensearch-{{ .Values.clusterName }}-securityconfig
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opendistro.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+{{- range $key, $val := .Values.securityConfig.data }}
+  {{ $key }}: |
+    {{- $val | nindent 4 }}
+{{- end }}
+{{- end }}
