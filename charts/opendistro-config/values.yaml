@@ -13,3 +13,12 @@ securityConfig:
 tls:
   enabled: false
   issuer: {}
+
+# Used for autocreating ism policy and index-template
+indexName: filebeat
+
+ism:
+  rollover:
+    period: 20h
+  delete:
+    period: 30d

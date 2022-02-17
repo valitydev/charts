@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opensearch-{{ .Values.clusterName }}-template
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opendistro.labels" . | nindent 4 }}
+data:
+  index_template_json: |
+    {{- tpl  (.Files.Get "files/index-template.json.gotmpl") . | nindent 4 }}
+  ism_policy_json: |
+    {{- tpl  (.Files.Get "files/index-ism-policy.json.gotmpl") . | nindent 4 }}
