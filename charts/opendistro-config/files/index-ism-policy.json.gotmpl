@@ -1,0 +1,38 @@
+{
+  "policy": {
+    "description": "Generic index lifecycle policy",
+    "default_state": "rollover",
+    "ism_template": {
+      "index_patterns": ["{{ .Values.indexName }}-*"],
+      "priority": 100
+    },
+    "states": [
+      {
+        "name": "rollover",
+        "actions": [
+          {
+            "rollover": {
+              "min_index_age" : "{{ .Values.ism.rollover.period | default "24h" }}"
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "state_name": "delete",
+            "conditions": {
+              "min_index_age": "{{ .Values.ism.delete.period | default "30d" }}"
+            }
+          }
+        ]
+      },
+      {
+        "name": "delete",
+        "actions": [
+          {
+            "delete": {}
+          }
+        ]
+      }
+    ]
+  }
+}
