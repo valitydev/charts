@@ -1,0 +1,25 @@
+{{ if .Values.netPolicies }}
+{{- $relname := .Release.Name -}}
+{{- $relnamespace := .Release.Namespace -}}
+{{ range .Values.netPolicies }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $relname }}-{{ .name }}-ingress
+  namespace: {{ $relnamespace }}
+spec:
+  podSelector:
+    matchLabels:
+      selector.cilium/release: {{ .name }}
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: {{ $relname }}
+    ports:
+    {{- range .filters }}
+    - protocol: {{ .type }}
+      port: {{ .port }}
+    {{- end }}
+{{- end }}
+{{- end }}
