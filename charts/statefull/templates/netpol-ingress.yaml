@@ -2,6 +2,7 @@
 {{- $relname := .Release.Name -}}
 {{- $relnamespace := .Release.Namespace -}}
 {{ range .Values.netPolicies }}
+---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
