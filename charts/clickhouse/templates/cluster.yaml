@@ -92,7 +92,10 @@ spec:
           type: ClusterIP
     podTemplates:
       - name: pod-template-with-volumes
-        distribution: {{ .Values.distribution | quote }}
+        {{- with .Values.distribution }}
+        podDistribution:
+          {{- toYaml . | nindent 10  }}
+        {{- end }}
         metadata:
           labels:
             selector.cilium/release: {{ .Release.Name }}
@@ -110,9 +113,6 @@ spec:
                 {{- toYaml . | nindent 16 }}
             {{- end }}
           volumes:
-            - name: schema-bootstrap-volume
-              configMap:
-                name: {{ include "clickhouse.fullname" . }}
         {{- with .Values.volumes }}
             {{- toYaml . | nindent 12 }}
         {{- end }}
