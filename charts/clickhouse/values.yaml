@@ -32,32 +32,11 @@ resources: {}
 
 users: []    
 
-volumeMounts:
-  - name: data-storage-vc-template
-    mountPath: /var/lib/clickhouse
-  - name: log-storage-vc-template
-    mountPath: /var/log/clickhouse-server
-  - name: schema-bootstrap-volume
-    mountPath: /docker-entrypoint-initdb.d
-    readOnly: true
+volumeMounts: []
 
 volumes: []
 
-volumeClaimTemplates:
-  - name: data-storage-vc-template
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 3Gi
-  - name: log-storage-vc-template
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 2Gi  
+volumeClaimTemplates: []
 
 configMap: {}
 
