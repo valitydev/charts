@@ -15,7 +15,7 @@ replicasUseFQDN: "no"
 
 image:
   repository: yandex/clickhouse-server
-  tag: 21.3
+  tag: 21.12
   pullPolicy: IfNotPresent
 
 zookeeper: []
