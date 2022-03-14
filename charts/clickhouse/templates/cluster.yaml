@@ -9,12 +9,22 @@ spec:
     templates:
       serviceTemplate: ch-without-lb
   configuration:
+    {{- if .Values.settings }}
+    settings:
+      {{- toYaml .Values.settings | nindent 6 }}
+    {{- end }}
+
     {{- if .Values.zookeeper }}
     zookeeper:
       nodes:
       {{- with .Values.zookeeper }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
+    {{- end }}
+
+    {{- if .Values.files }}
+    files:
+      {{- toYaml .Values.files | nindent 6 }}
     {{- end }}
 
     clusters:
