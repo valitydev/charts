@@ -15,7 +15,6 @@
         "number_of_replicas" : "1"
       }
     },
-
     "mappings" : {
       "_routing" : {
         "required" : false
@@ -489,6 +488,40 @@
         },
         "kubernetes" : {
           "properties" : {
+            "pod" : {
+              "properties" : {
+                "name" : {
+                  "type" : "alias",
+                  "path" : "kubernetes.labels.selector.cilium/release.keyword"
+                }
+              }
+            },
+            "labels" : {
+              "properties" : {
+                "selector" : {
+                  "properties" : {
+                    "cilium/release" : {
+                      "type" : "text",
+                      "fields" : {
+                        "keyword" : {
+                          "type" : "keyword",
+                          "ignore_above" : 256
+                        }
+                      }
+                    },
+                    "vaultinject" : {
+                      "type" : "text",
+                      "fields" : {
+                        "keyword" : {
+                          "type" : "keyword",
+                          "ignore_above" : 256
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
             "container_image" : {
               "type" : "text",
               "fields" : {
@@ -538,7 +571,7 @@
         },
         "service" : {
             "type" : "alias",
-            "path" : "kubernetes.container_name.keyword"
+            "path" : "kubernetes.labels.selector.cilium/release.keyword"
           },
         "amount_transaction" : {
           "type" : "text",
