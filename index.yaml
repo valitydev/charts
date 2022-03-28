@@ -69,6 +69,16 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/clickhouse-operator-0.1.4/clickhouse-operator-0.1.4.tgz
     version: 0.1.4
+  cp-kafka-connect:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2022-03-28T07:39:48.582726495Z"
+    description: A Helm chart for Confluent Kafka Connect on Kubernetes
+    digest: e6a661db3078d1853a7ef3f071f8dd01b775eb209321596a5c17199132e2ded1
+    name: cp-kafka-connect
+    urls:
+    - https://github.com/valitydev/charts/releases/download/cp-kafka-connect-0.1.0/cp-kafka-connect-0.1.0.tgz
+    version: 0.1.0
   elk:
   - apiVersion: v1
     appVersion: 7.10.0
@@ -245,4 +255,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2022-03-14T10:13:43.571593077Z"
+generated: "2022-03-28T07:39:48.582932697Z"
