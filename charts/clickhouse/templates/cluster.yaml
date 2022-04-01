@@ -109,8 +109,12 @@ spec:
         metadata:
           labels:
             selector.cilium/release: {{ .Release.Name }}
+          {{- if or .Values.podAnnotations }}
           annotations:
-            custom.annotation: "annotation.value"
+          {{- with .Values.podAnnotations }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
         spec:
           containers:
             - name: clickhouse
