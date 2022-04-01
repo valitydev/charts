@@ -41,18 +41,6 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{/*
-Form the Kafka URL. If Kafka is installed as part of this chart, use k8s service discovery,
-else use user-provided URL
-*/}}
-{{- define "cp-kafka-connect.kafka.bootstrapServers" -}}
-{{- if .Values.kafka.bootstrapServers -}}
-{{- .Values.kafka.bootstrapServers -}}
-{{- else -}}
-{{- printf "PLAINTEXT://%s:9092" (include "cp-kafka-connect.cp-kafka-headless.fullname" .) -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Create a default fully qualified schema registry name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
