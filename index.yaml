@@ -3,6 +3,16 @@ entries:
   clickhouse:
   - apiVersion: v2
     appVersion: 1.18.0
+    created: "2022-04-01T16:54:36.177315096Z"
+    description: A Clickhouse-cluster Helm chart for Kubernetes
+    digest: b8ccd3db3e02eed3e5a68ca82d7181b7d1cc746bc1704e8b4eec5317a4b7ce4f
+    name: clickhouse
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/clickhouse-0.1.17/clickhouse-0.1.17.tgz
+    version: 0.1.17
+  - apiVersion: v2
+    appVersion: 1.18.0
     created: "2022-03-14T10:13:43.571541177Z"
     description: A Clickhouse-cluster Helm chart for Kubernetes
     digest: f162af3b31d668d8b7572d35916e0f7853235b920a4cb4f6eb05f419bf77e77e
@@ -108,6 +118,18 @@ entries:
     - https://github.com/valitydev/charts/releases/download/elk-0.1.11/elk-0.1.11.tgz
     version: 0.1.11
   opendistro-config:
+  - apiVersion: v2
+    appVersion: 1.2.4
+    created: "2022-04-01T16:54:36.346575369Z"
+    description: A Helm chart for Opendistro configs and tls certs
+    digest: cc1dc6b28526b14390171b5288228261114c2d0ee2892bf0b12e0eab5676618f
+    maintainers:
+    - name: amalgamm
+    name: opendistro-config
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/opendistro-config-1.0.3/opendistro-config-1.0.3.tgz
+    version: 1.0.3
   - apiVersion: v2
     appVersion: 1.2.4
     created: "2022-02-22T13:39:36.143159205Z"
@@ -264,4 +286,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2022-04-01T12:19:08.799033606Z"
+generated: "2022-04-01T16:54:36.346768469Z"
