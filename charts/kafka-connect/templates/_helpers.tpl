@@ -32,6 +32,17 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Generate list bootstrap-servers
+*/}}
+{{- define "cp-kafka.bootstraps" -}}
+{{- $boots := list -}}
+{{- range (split ";" .Values.kafka.bootstrapServers) -}}
+{{- $boots = printf "PLAINTEXT://%s" . | append $boots -}}
+{{- end -}}
+{{- join "," $boots -}}
+{{- end -}}
+
+{{/*
 Create a default fully qualified kafka headless name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
