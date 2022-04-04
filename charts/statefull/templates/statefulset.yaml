@@ -69,14 +69,14 @@ spec:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           {{- else }}
             {{- toYaml .Values.livenessProbe | nindent 12 }}
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
           {{- end }}
           readinessProbe:
           {{- if .Values.readinessProbe.initialDelaySeconds }}
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           {{- else }}
             {{- toYaml .Values.readinessProbe | nindent 12 }}
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
