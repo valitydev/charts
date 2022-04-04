@@ -96,9 +96,19 @@ spec:
         {{- end }}
         {{- end }}
           livenessProbe:
+          {{- if .Values.livenessProbe.initialDelaySeconds }}
             {{- toYaml .Values.livenessProbe | nindent 12 }}
+          {{- else }}
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            initialDelaySeconds: 10
+          {{- end }}
           readinessProbe:
+          {{- if .Values.readinessProbe.initialDelaySeconds }}
             {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- else }}
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            initialDelaySeconds: 10
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- with .Values.volumeMounts }}
