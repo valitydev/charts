@@ -95,6 +95,7 @@ spec:
             {{- toYaml . | nindent 10 }}
         {{- end }}
         {{- end }}
+        {{- if .Values.livenessProbe }}
           livenessProbe:
           {{- if .Values.livenessProbe.failureThreshold }}
             {{- toYaml .Values.livenessProbe | nindent 12 }}
@@ -102,6 +103,8 @@ spec:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
             failureThreshold: 6
           {{- end }}
+        {{- end }}
+        {{- if .Values.readinessProbe }}
           readinessProbe:
           {{- if .Values.readinessProbe.failureThreshold }}
             {{- toYaml .Values.readinessProbe | nindent 12 }}
@@ -109,6 +112,7 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
             failureThreshold: 6
           {{- end }}
+        {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- with .Values.volumeMounts }}
