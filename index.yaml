@@ -129,6 +129,18 @@ entries:
   opendistro-config:
   - apiVersion: v2
     appVersion: 1.2.4
+    created: "2022-04-20T16:17:09.385643161Z"
+    description: A Helm chart for Opendistro configs and tls certs
+    digest: cb3c7506a92f11ccc5914c9511993010df6f1eed3262b4698f14b26036d4793f
+    maintainers:
+    - name: amalgamm
+    name: opendistro-config
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/opendistro-config-1.0.4/opendistro-config-1.0.4.tgz
+    version: 1.0.4
+  - apiVersion: v2
+    appVersion: 1.2.4
     created: "2022-04-01T16:54:36.346575369Z"
     description: A Helm chart for Opendistro configs and tls certs
     digest: cc1dc6b28526b14390171b5288228261114c2d0ee2892bf0b12e0eab5676618f
@@ -331,4 +343,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2022-04-12T14:35:51.066885787Z"
+generated: "2022-04-20T16:17:09.385713263Z"
