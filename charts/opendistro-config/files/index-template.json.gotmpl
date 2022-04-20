@@ -486,93 +486,6 @@
             }
           }
         },
-        "kubernetes" : {
-          "properties" : {
-            "pod" : {
-              "properties" : {
-                "name" : {
-                  "type" : "alias",
-                  "path" : "kubernetes.labels.selector.cilium/release.keyword"
-                }
-              }
-            },
-            "labels" : {
-              "properties" : {
-                "selector" : {
-                  "properties" : {
-                    "cilium/release" : {
-                      "type" : "text",
-                      "fields" : {
-                        "keyword" : {
-                          "type" : "keyword",
-                          "ignore_above" : 256
-                        }
-                      }
-                    },
-                    "vaultinject" : {
-                      "type" : "text",
-                      "fields" : {
-                        "keyword" : {
-                          "type" : "keyword",
-                          "ignore_above" : 256
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "container_image" : {
-              "type" : "text",
-              "fields" : {
-                "keyword" : {
-                  "type" : "keyword",
-                  "ignore_above" : 256
-                }
-              }
-            },
-            "container_name" : {
-              "type" : "text",
-              "fields" : {
-                "keyword" : {
-                  "type" : "keyword",
-                  "ignore_above" : 256
-                }
-              }
-            },
-            "host" : {
-              "type" : "text",
-              "fields" : {
-                "keyword" : {
-                  "type" : "keyword",
-                  "ignore_above" : 256
-                }
-              }
-            },
-            "namespace_name" : {
-              "type" : "text",
-              "fields" : {
-                "keyword" : {
-                  "type" : "keyword",
-                  "ignore_above" : 256
-                }
-              }
-            },
-            "pod_name" : {
-              "type" : "text",
-              "fields" : {
-                "keyword" : {
-                  "type" : "keyword",
-                  "ignore_above" : 256
-                }
-              }
-            }
-          }
-        },
-        "service" : {
-            "type" : "alias",
-            "path" : "kubernetes.labels.selector.cilium/release.keyword"
-          },
         "amount_transaction" : {
           "type" : "text",
           "fields" : {
@@ -1293,6 +1206,55 @@
             "keyword" : {
               "ignore_above" : 256,
               "type" : "keyword"
+            }
+          }
+        },
+        "kubernetes" : {
+          "properties" : {
+            "container_name" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "ignore_above" : 256,
+                  "type" : "keyword"
+                }
+              }
+            },
+            "host" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "ignore_above" : 256,
+                  "type" : "keyword"
+                }
+              }
+            },
+            "container_image" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "ignore_above" : 256,
+                  "type" : "keyword"
+                }
+              }
+            },
+            "namespace_name" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "ignore_above" : 256,
+                  "type" : "keyword"
+                }
+              }
+            },
+            "pod_name" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "ignore_above" : 256,
+                  "type" : "keyword"
+                }
+              }
             }
           }
         },
@@ -2562,6 +2524,15 @@
             }
           }
         },
+        "service" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "ignore_above" : 256,
+              "type" : "keyword"
+            }
+          }
+        },
         "party_id" : {
           "type" : "text",
           "fields" : {
@@ -2617,6 +2588,7 @@
         }
       }
     },
-    "aliases": { }
-  }
+    "aliases" : { }
+  },
+  "composed_of" : [ ]
 }
