@@ -54,6 +54,15 @@ entries:
   clickhouse-operator:
   - apiVersion: v1
     appVersion: "0.18"
+    created: "2022-04-23T13:27:46.480940111Z"
+    description: A Helm chart for clickhouse operator
+    digest: 383804e9534d6f65aa4ca9cdf5e5710c1605eb6a43249523a20db369eb3b736a
+    name: clickhouse-operator
+    urls:
+    - https://github.com/valitydev/charts/releases/download/clickhouse-operator-0.1.7/clickhouse-operator-0.1.7.tgz
+    version: 0.1.7
+  - apiVersion: v1
+    appVersion: "0.18"
     created: "2022-01-28T14:49:05.920188146Z"
     description: A Helm chart for clickhouse operator
     digest: 49ad5e82f0ef6cda443f24fa93c6f3d4ab425d18131bed36cfbaacedb11e65f7
@@ -343,4 +352,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2022-04-20T16:17:09.385713263Z"
+generated: "2022-04-23T13:27:46.481050012Z"
