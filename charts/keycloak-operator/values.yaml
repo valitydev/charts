@@ -1,0 +1,92 @@
+# Default values for test.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# ImagePullSecrets for operator ServiceAccount, list of secrets in the same namespace
+# used to pull operator image. Must be set for any cluster configured with private docker registry.
+imagePullSecrets: []
+priorityClassName: ""
+
+runInClusterScope: false
+# Used to replace keycloakNamespace to support operator watch multiple namespaces.
+watchedNamespaces: ""
+
+replicaCount: 1
+
+image:
+  repository: quay.io/keycloak/keycloak-operator
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Operator resource defaults
+resources:
+  limits: {}
+  requests:
+    cpu: 250m
+    memory: 500Mi
+
+securityContext: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 11
+  targetCPU: 50
+  targetMemory: 50
+  labels: {}
+  annotations: {}
+
+keycloak:
+  enabled: false
+  keycloakDeploymentSpec:
+    resources:
+      limits: {}
+      requests:
+        cpu: 250m
+        memory: 500Mi
+  ingress:
+    enabled: false
+    ingressClassName: ""
+    pathType: ImplementationSpecific
+    hostname: keycloak.local
+    path: /
+    serviceName: keycloak
+    servicePortNumber: 8443
+    labels: {}
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      # Keycloak header with token is bigger than default 4k
+      nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+      nginx.ingress.kubernetes.io/server-snippet: |
+        location ~* "^/auth/realms/master/metrics" {
+              return 301 /auth/realms/master;
+        }
+    tls: false
+    selfSigned: false
+    extraHosts: []
+    extraPaths: []
+    extraTls: []
+  # Doesnt work
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 11
+    targetCPU: 50
+    targetMemory: 50
+    labels: {}
+    annotations: {}
+
+keycloakRealms: []
+keycloakClients: []
+keycloakUsers: []
+keycloakBackups: []
+
+extraEnvVars: {}
+
+# Additional labels and annotations to apply on the pod level for monitoring and logging configuration.
+podLabels: {}
+podAnnotations: {}
