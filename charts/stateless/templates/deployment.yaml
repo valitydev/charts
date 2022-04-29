@@ -16,7 +16,6 @@ spec:
         app.kubernetes.io/name: {{ include "stateless.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         selector.cilium/release: {{ .Release.Name }}
-        selector.vaultinject: {{ .Release.Namespace | default "rbk" }}
       annotations:
       {{- if or .Values.configMap .Values.secret }}
         config/checksum: {{ include "stateless.configHash" . }}
