@@ -14,9 +14,7 @@ spec:
     metadata:
       name: "{{ .Release.Name }}"
       labels:
-        app.kubernetes.io/name: {{ include "stateless.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        selector.cilium/release: {{ .Release.Name }}
+        {{ include "stateless.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

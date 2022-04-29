@@ -16,9 +16,7 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "statefull.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        selector.cilium/release: {{ .Release.Name }}
+        {{ include "statefull.labels" . | nindent 8 }}
       annotations:
       {{- if or .Values.configMap .Values.secret }}
         config/checksum: {{ include "statefull.configHash" . }}

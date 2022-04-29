@@ -6,12 +6,20 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
+  {{- if .group }}
+  name: {{ $relname }}-{{ .group }}-ingress
+  {{- else }}
   name: {{ $relname }}-{{ .name }}-ingress
+  {{- end}}
   namespace: {{ $relnamespace }}
 spec:
   endpointSelector:
     matchLabels:
+      {{- if .group }}
+      k8s:selector.cilium/group: {{ .group }}
+      {{- else }}
       k8s:selector.cilium/release: {{ .name }}
+      {{- end }}
   ingress:
   - fromEndpoints:
     - matchLabels:

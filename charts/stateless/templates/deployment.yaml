@@ -13,9 +13,7 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "stateless.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        selector.cilium/release: {{ .Release.Name }}
+        {{ include "stateless.labels" . | nindent 8 }}
       annotations:
       {{- if or .Values.configMap .Values.secret }}
         config/checksum: {{ include "stateless.configHash" . }}
