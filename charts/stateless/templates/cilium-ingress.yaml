@@ -1,7 +1,8 @@
-{{ if .Values.ciliumPolicies }}
+{{- if .Values.cilium }}
+{{- if .Values.cilium.enabled }}
 {{- $relname := .Release.Name -}}
 {{- $relnamespace := .Release.Namespace -}}
-{{ range .Values.ciliumPolicies }}
+{{ range .Values.netPolicies }}
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -41,5 +42,6 @@ spec:
         {{- end }}
       {{- end }}
     {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}

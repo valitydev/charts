@@ -1,4 +1,5 @@
-{{ if .Values.netPolicies }}
+{{- if .Values.netpolicy }}
+{{- if .Values.netpolicy.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -22,4 +23,5 @@ spec:
       port: {{ .port }}
     {{- end }}
   {{- end }}
+{{- end }}
 {{- end }}

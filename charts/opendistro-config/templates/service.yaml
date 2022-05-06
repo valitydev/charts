@@ -1,0 +1,41 @@
+{{- range .Values.services }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "opendistro.labels" $ | nindent 4 }}
+{{- if .labels }}
+{{ toYaml .labels | indent 4 }}
+{{- end }}
+{{- if .annotations }}
+  annotations:
+{{ toYaml .annotations | indent 4 }}
+{{- end }}
+spec:
+  type: {{ .type }}
+  selector:
+    {{- toYaml .selectors | nindent 4 }}
+  ports:
+  - name: {{ .httpPortName | default "http" }}
+    protocol: TCP
+    port: {{ .httpPort }}
+{{- if .nodePort }}
+    nodePort: {{ .nodePort }}
+{{- end }}
+  - name: {{ .transportPortName | default "transport" }}
+    protocol: TCP
+    port: {{ .transportPort }}
+{{- if .loadBalancerIP }}
+  loadBalancerIP: {{ .loadBalancerIP }}
+{{- end }}
+{{- with .loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+{{ toYaml . | indent 4 }}
+{{- end }}
+{{- if .externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .externalTrafficPolicy }}
+{{- end }}
+{{- end }}
