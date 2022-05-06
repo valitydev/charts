@@ -1,4 +1,4 @@
-{{- if or .Values.cilium.enabled }}
+{{- if and .Values.cilium .Values.cilium.enabled }}
 {{- $relname := .Release.Name -}}
 {{- $relnamespace := .Release.Namespace -}}
 {{ range .Values.netPolicies }}

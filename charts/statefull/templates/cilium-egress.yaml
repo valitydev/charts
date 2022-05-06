@@ -1,4 +1,4 @@
-{{- if or .Values.cilium.enabled }}
+{{- if and .Values.cilium .Values.cilium.enabled }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
