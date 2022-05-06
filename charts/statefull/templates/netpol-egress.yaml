@@ -16,7 +16,11 @@ spec:
   - to:
     - podSelector:
         matchLabels:
+          {{- if .group }}
+          selector.cilium/group: {{ .group }}
+          {{- else }}
           selector.cilium/release: {{ .name }}
+          {{- end }}
     ports:
     {{- range .filters }}
     - protocol: {{ .type }}
