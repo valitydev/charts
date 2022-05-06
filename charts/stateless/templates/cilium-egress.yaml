@@ -1,3 +1,4 @@
+{{- if .Values.cilium }}
 {{- if .Values.cilium.enabled }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -20,4 +21,5 @@ spec:
           port: {{ .port | quote }}
     {{- end }}
   {{- end }}
+{{- end }}
 {{- end }}
