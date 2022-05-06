@@ -1,4 +1,4 @@
-{{ if .Values.netPolicies }}
+{{- if .Values.netpolicy.enabled }}
 {{- $relname := .Release.Name -}}
 {{- $relnamespace := .Release.Namespace -}}
 {{ range .Values.netPolicies }}
