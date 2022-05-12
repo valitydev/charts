@@ -35,7 +35,11 @@ helm.sh/chart: {{ include "statefull.chart" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 selector.cilium/release: {{ .Release.Name }}
 {{- if or (hasPrefix "adapter" .Release.Name) (hasPrefix "proxy" .Release.Name) }}
+{{- if hasSuffix "payout" .Release.Name }}
+selector.cilium/group: adapters-payout
+{{- else }}
 selector.cilium/group: adapters
+{{- end }}
 {{- end }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
