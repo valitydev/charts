@@ -1,17 +1,26 @@
-{{ if .Values.ciliumPolicies }}
+{{- if .Values.cilium }}
+{{- if .Values.cilium.enabled }}
 {{- $relname := .Release.Name -}}
 {{- $relnamespace := .Release.Namespace -}}
-{{ range .Values.ciliumPolicies }}
+{{ range .Values.netPolicies }}
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
+  {{- if .group }}
+  name: {{ $relname }}-{{ .group }}-ingress
+  {{- else }}
   name: {{ $relname }}-{{ .name }}-ingress
+  {{- end}}
   namespace: {{ $relnamespace }}
 spec:
   endpointSelector:
     matchLabels:
+      {{- if .group }}
+      k8s:selector.cilium/group: {{ .group }}
+      {{- else }}
       k8s:selector.cilium/release: {{ .name }}
+      {{- end }}
   ingress:
   - fromEndpoints:
     - matchLabels:
@@ -21,17 +30,7 @@ spec:
       - ports:
         - protocol: {{ .type }}
           port: {{ .port | quote }}
-      {{- if .rules }} 
-        rules:  
-          kafka:
-        {{- range .rules.kafka }}
-        {{- $rolename := .role }} 
-          {{- range .topics }}
-            - role: {{ $rolename }}
-              topic: {{ . }}
-          {{- end }}
-        {{- end }}
-      {{- end }}
     {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
