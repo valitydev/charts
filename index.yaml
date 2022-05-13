@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   clickhouse:
   - apiVersion: v2
+    appVersion: 21.12.4
+    created: "2022-05-13T08:07:30.69229098Z"
+    description: A Clickhouse-cluster Helm chart for Kubernetes
+    digest: b4cf1fb673496c6b6a827f5beaf282beae52b008e7a3b6fe85bcfc46ee9d1202
+    name: clickhouse
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/clickhouse-0.1.18/clickhouse-0.1.18.tgz
+    version: 0.1.18
+  - apiVersion: v2
     appVersion: 1.18.0
     created: "2022-04-01T16:54:36.177315096Z"
     description: A Clickhouse-cluster Helm chart for Kubernetes
@@ -221,6 +231,15 @@ entries:
   statefull:
   - apiVersion: v1
     appVersion: "1.0"
+    created: "2022-05-13T08:07:30.859142642Z"
+    description: A Helm chart for statefull vality services
+    digest: 07863b4120624334864a6bc88f1a53dc0a27152722619bb5d09ab8077b9430bf
+    name: statefull
+    urls:
+    - https://github.com/valitydev/charts/releases/download/statefull-1.0.9/statefull-1.0.9.tgz
+    version: 1.0.9
+  - apiVersion: v1
+    appVersion: "1.0"
     created: "2022-04-12T14:35:50.887668926Z"
     description: A Helm chart for statefull vality services
     digest: 93bb6b85b0948cda1c2f3209229f39a70b227b6a6b6de36e41cf94e7918dbe23
@@ -294,6 +313,15 @@ entries:
   stateless:
   - apiVersion: v1
     appVersion: "1.0"
+    created: "2022-05-13T08:07:31.039460971Z"
+    description: A Helm chart for stateless vality services
+    digest: ddafc0448ec79f3ad974d7dff070495fc48a5a825f03bfff1e385429a4e384fc
+    name: stateless
+    urls:
+    - https://github.com/valitydev/charts/releases/download/stateless-1.0.9/stateless-1.0.9.tgz
+    version: 1.0.9
+  - apiVersion: v1
+    appVersion: "1.0"
     created: "2022-04-12T14:35:51.066815087Z"
     description: A Helm chart for stateless vality services
     digest: 362fbd2fa58d9b691549e1c198130ee2545bf43f7c2eac7572da39cd03f1b980
@@ -364,4 +392,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2022-05-05T16:14:11.437990779Z"
+generated: "2022-05-13T08:07:31.039619573Z"
