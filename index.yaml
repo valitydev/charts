@@ -231,6 +231,15 @@ entries:
   statefull:
   - apiVersion: v1
     appVersion: "1.0"
+    created: "2022-05-25T10:58:15.295607784Z"
+    description: A Helm chart for statefull vality services
+    digest: 1d95267501775572b26c1658ec2862c2bba9e3f88dbc76066381a1bbd2992f52
+    name: statefull
+    urls:
+    - https://github.com/valitydev/charts/releases/download/statefull-1.0.10/statefull-1.0.10.tgz
+    version: 1.0.10
+  - apiVersion: v1
+    appVersion: "1.0"
     created: "2022-05-13T08:07:30.859142642Z"
     description: A Helm chart for statefull vality services
     digest: 07863b4120624334864a6bc88f1a53dc0a27152722619bb5d09ab8077b9430bf
@@ -311,6 +320,15 @@ entries:
     - https://github.com/valitydev/charts/releases/download/statefull-1.0.1/statefull-1.0.1.tgz
     version: 1.0.1
   stateless:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2022-05-25T10:58:15.413537058Z"
+    description: A Helm chart for stateless vality services
+    digest: af60255f63dee706ed18195b99db7691f70e6699cbc196582ce6584942bd91a4
+    name: stateless
+    urls:
+    - https://github.com/valitydev/charts/releases/download/stateless-1.0.11/stateless-1.0.11.tgz
+    version: 1.0.11
   - apiVersion: v1
     appVersion: "1.0"
     created: "2022-05-17T12:28:25.961654593Z"
@@ -401,4 +419,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2022-05-17T12:28:25.961863694Z"
+generated: "2022-05-25T10:58:15.413856058Z"
