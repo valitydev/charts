@@ -7,32 +7,58 @@
       "priority": 100
     },
     "states": [
-      {
-        "name": "rollover",
-        "actions": [
-          {
-            "rollover": {
-              "min_index_age" : "{{ .Values.ism.rollover.period | default "24h" }}"
-            }
-          }
-        ],
-        "transitions": [
-          {
-            "state_name": "delete",
-            "conditions": {
-              "min_index_age": "{{ .Values.ism.delete.period | default "30d" }}"
-            }
-          }
-        ]
-      },
-      {
-        "name": "delete",
-        "actions": [
-          {
-            "delete": {}
-          }
-        ]
-      }
-    ]
+        {
+            "name": "rollover",
+            "actions": [
+                {
+                    "rollover": {
+                        "min_index_age": "20h"
+                    }
+                }
+            ],
+            "transitions": [
+                {
+                    "state_name": "delete",
+                    "conditions": {
+                        "min_index_age": "29d"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "create_snapshot",
+            "actions": [
+                {
+                    "timeout": "2d",
+                    "retry": {
+                        "count": 3,
+                        "backoff": "exponential",
+                        "delay": "1h"
+                    },
+                    "snapshot": {
+                        "repository": "s3-backups",
+                        "snapshot": ""
+                    }
+                }
+            ],
+            "transitions": [
+                {
+                    "state_name": "delete",
+                    "conditions": {
+                        "min_index_age": "35d"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "delete",
+            "actions": [
+                {
+                    "delete": {}
+                }
+            ],
+            "transitions": []
+        }
+    ],
   }
 }
