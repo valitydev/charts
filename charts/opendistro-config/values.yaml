@@ -35,4 +35,8 @@ metrics:
         path: /_prometheus/metrics
         scheme: https
         
-  userSecrets: []
+userSecrets: []
+extraSecrets: []
+#  - name: foo
+#    data:
+#      foo: bar
