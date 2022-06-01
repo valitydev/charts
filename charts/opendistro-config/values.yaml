@@ -37,3 +37,6 @@ metrics:
         
 userSecrets: []
 extraSecrets: []
+#  - name: foo
+#     data:
+#       foo: bar
