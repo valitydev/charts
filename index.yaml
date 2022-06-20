@@ -145,6 +145,17 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/elk-0.1.11/elk-0.1.11.tgz
     version: 0.1.11
+  netpolicy:
+  - apiVersion: v2
+    appVersion: 1.9.0
+    created: "2022-06-20T15:51:14.718244046Z"
+    description: A Helm chart for Kubernetes
+    digest: e8f6720f3f421a1b4ce0f91d8135776803163c9b26d1ebddbcba3c0227a66e70
+    name: netpolicy
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/netpolicy-0.1.17/netpolicy-0.1.17.tgz
+    version: 0.1.17
   opendistro-config:
   - apiVersion: v2
     appVersion: 2.0.0
@@ -443,4 +454,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2022-06-14T14:07:52.260071013Z"
+generated: "2022-06-20T15:51:14.718325149Z"
