@@ -8,3 +8,6 @@ configMap: {}
 
 secret: {}
 #  data: ""
+
+ingress:
+  enabled: false
