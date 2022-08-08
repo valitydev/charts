@@ -136,12 +136,17 @@ logs:
   enabled: true
   json: false
 
-ciliumPolicies: []
+netPolicies: []
   # - name: consul
   #   namespace: default
   #   filters:
   #     - port: 8500
   #       type: TCP
+  # - name: riak
+  #   filters:
+  #    - port: 6000
+  #      endPort: 7999
+  #      type: TCP
   # - name: kafka
   #   namespace: default
   #   filters:
