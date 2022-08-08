@@ -154,8 +154,8 @@ ciliumPolicies: []
   #             - bla1
   #             - bla2
  
-storage:
- accessModes: ["ReadWriteOnce"]
- resources:
-    requests:
-      storage: 1Gi
+storage: {}
+#  accessModes: ["ReadWriteOnce"]
+#  resources:
+#     requests:
+#       storage: 1Gi
