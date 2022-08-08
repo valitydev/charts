@@ -22,7 +22,11 @@ spec:
       - ports:
     {{- range .filters }}
         - protocol: {{ .type }}
+          {{- if .endPort }}
+          port: {{ printf "%s-%s" .port .endPort }}
+          {{- else}}
           port: {{ .port | quote }}
+          {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
