@@ -11,3 +11,20 @@ secret: {}
 
 ingress:
   enabled: false
+#   annotations: {}
+#   hosts:
+#     - host: superservice.{{ $ingressDomain | default "vality.dev" }}
+#       paths:
+#         - /
+# {{- if .Values.services.ingress.tls.enabled }}
+#   tls:
+#   {{ if .Values.services.ingress.tls.letsEncrypt.enabled }}
+#     - secretName: superservice-{{ .Values.services.ingress.tls.secretName }}
+#   {{- else }}
+#     - secretName: {{ .Values.services.ingress.tls.secretName }}
+#   {{- end }}
+#       hosts:
+#         - superservice.{{ $ingressDomain | default "vality.dev" }}
+# {{- end }}
+#   serviceName: superserviceololo
+#   servicePort: 8080
