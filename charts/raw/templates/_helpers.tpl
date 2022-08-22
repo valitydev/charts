@@ -1,7 +1,4 @@
 {{/* vim: set filetype=mustache: */}}
-{{- $fullName := include "raw.fullname" . -}}
-{{- $NS := .Release.Namespace -}}
-
 {{/*
 Expand the name of the chart.
 */}}
