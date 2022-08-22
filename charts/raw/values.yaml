@@ -7,7 +7,13 @@ configMap: {}
 #  binaryData: {}
 
 secret: {}
-#  data: ""
+#   data: ""
+#
+# If you need randomgenerated value of secretkey just use gendata with keys and empty values. Random generated secrets will be kept after upgrade:
+#
+#   gendata:
+#     secret-root-password: ""
+#     verysecret-phrase: ""
 
 ingress:
   enabled: false
