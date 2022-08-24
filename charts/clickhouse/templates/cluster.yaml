@@ -29,11 +29,18 @@ spec:
 
     clusters:
       - name: {{ .Values.clusterName }}
+        {{- if .Values.customClusterConfiguration }}
+        {{- with .Values.customClusterConfiguration }}
+        layout:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- else }}
         templates:
           podTemplate: pod-template-with-volumes
         layout:
           shardsCount: {{ .Values.shardsCount }}
           replicasCount: {{ .Values.replicasCount }}
+      {{- end }}
     users:
       {{- range .Values.users }}
       {{ .username }}/password: {{ .password }}
@@ -121,7 +128,7 @@ spec:
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
               imagePullPolicy: {{ .Values.image.pullPolicy }}
               resources:
-                {{- toYaml .Values.resources | nindent 16 }} 
+                {{- toYaml .Values.resources | nindent 16 }}
             {{- with .Values.volumeMounts }}
               volumeMounts:
                 {{- toYaml . | nindent 16 }}
@@ -130,6 +137,40 @@ spec:
         {{- with .Values.volumes }}
             {{- toYaml . | nindent 12 }}
         {{- end }}
+      {{- range .Values.zonedPodTemplates }}
+      - name: {{ .name }}
+        zone:
+          values:
+            - {{ .zone | quote }}
+        {{- with $.Values.distribution }}
+        podDistribution:
+          {{- toYaml . | nindent 10  }}
+        {{- end }}
+        metadata:
+          labels:
+            selector.cilium/release: {{ $.Release.Name }}
+          {{- if or $.Values.podAnnotations }}
+          annotations:
+          {{- with $.Values.podAnnotations }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
+        spec:
+          containers:
+            - name: clickhouse
+              image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+              imagePullPolicy: {{ $.Values.image.pullPolicy }}
+              resources:
+                {{- toYaml $.Values.resources | nindent 16 }}
+            {{- with $.Values.volumeMounts }}
+              volumeMounts:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+          volumes:
+        {{- with $.Values.volumes }}
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+      {{- end }}
   {{- with .Values.volumeClaimTemplates }}
     volumeClaimTemplates:
       {{- toYaml . | nindent 6 }}
