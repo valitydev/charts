@@ -29,12 +29,12 @@ spec:
 
     clusters:
       - name: {{ .Values.clusterName }}
-        {{- if .Values.customClusterConfiguration }}
+      {{- if .Values.customClusterConfiguration }}
         {{- with .Values.customClusterConfiguration }}
         layout:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-        {{- else }}
+      {{- else }}
         templates:
           podTemplate: pod-template-with-volumes
         layout:
