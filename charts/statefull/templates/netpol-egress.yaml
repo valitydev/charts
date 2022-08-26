@@ -13,6 +13,35 @@ spec:
   - Egress
   egress:
   {{- range .Values.netPolicies }}
+  {{- if eq .name "postgres" }}
+  - to:
+      - ipBlock:
+          cidr: {{ $.Values.services.postgres.cidr }}
+    ports:
+      - protocol: TCP
+        port: {{ $.Values.services.postgres.port }}
+  {{- else if eq .name "kafka" }}
+  - to:
+      - ipBlock:
+          cidr: {{ $.Values.services.kafka.cidr }}
+    ports:
+      - protocol: TCP
+        port: 9092
+      - protocol: TCP
+        port: 9094
+      - protocol: TCP
+        port: 9096
+      - protocol: TCP
+        port: 9098
+      - protocol: TCP
+        port: 2181
+  {{- else if eq .name "s3" }}
+  - to:
+  {{- range $.Values.services.s3.cidrs }}
+      - ipBlock:
+          cidr: {{ . }}
+  {{- end }}
+  {{- else }}
   - to:
     - podSelector:
         matchLabels:
@@ -21,6 +50,7 @@ spec:
           {{- else }}
           selector.cilium/release: {{ .name }}
           {{- end }}
+    {{- if .ports }}
     ports:
     {{- range .filters }}
     - protocol: {{ .type }}
@@ -29,6 +59,8 @@ spec:
       endPort: {{ .endPort }}
       {{- end }}
     {{- end }}
+    {{- end }}
+  {{- end }}  
   {{- end }}
 {{- end }}
 {{- end }}

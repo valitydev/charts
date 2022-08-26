@@ -3,6 +3,7 @@
 {{- $relname := .Release.Name -}}
 {{- $relnamespace := .Release.Namespace -}}
 {{ range .Values.netPolicies }}
+{{- if or (ne .name "s3") (ne .name "kafka") (ne .name "postgres") }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -26,11 +27,17 @@ spec:
     - podSelector:
         matchLabels:
           selector.cilium/release: {{ $relname }}
+    {{- if .ports }}
     ports:
     {{- range .filters }}
     - protocol: {{ .type }}
       port: {{ .port }}
+      {{- if .endPort }}
+      endPort: {{ .endPort }}
+      {{- end }}
     {{- end }}
+    {{- end}}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
