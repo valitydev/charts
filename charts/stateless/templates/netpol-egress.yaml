@@ -18,23 +18,23 @@ spec:
       - ipBlock:
           cidr: {{ $.Values.services.postgres.cidr }}
     ports:
-      - protocol: TCP
-        port: {{ $.Values.services.postgres.port }}
+    - protocol: TCP
+      port: {{ $.Values.services.postgres.port | default "5432" }}
   {{- else if eq .name "kafka" }}
   - to:
       - ipBlock:
           cidr: {{ $.Values.services.kafka.cidr }}
     ports:
-      - protocol: TCP
-        port: 9092
-      - protocol: TCP
-        port: 9094
-      - protocol: TCP
-        port: 9096
-      - protocol: TCP
-        port: 9098
-      - protocol: TCP
-        port: 2181
+    - protocol: TCP
+      port: 9092
+    - protocol: TCP
+      port: 9094
+    - protocol: TCP
+      port: 9096
+    - protocol: TCP
+      port: 9098
+    - protocol: TCP
+      port: 2181
   {{- else if eq .name "s3" }}
   - to:
   {{- range $.Values.services.s3.cidrs }}
@@ -50,9 +50,9 @@ spec:
           {{- else }}
           selector.cilium/release: {{ .name }}
           {{- end }}
-    {{- if .ports }}
-    ports:
     {{- range .filters }}
+    {{- if .port }}
+    ports:
     - protocol: {{ .type }}
       port: {{ .port }}
       {{- if .endPort }}

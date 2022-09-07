@@ -27,9 +27,9 @@ spec:
     - podSelector:
         matchLabels:
           selector.cilium/release: {{ $relname }}
-    {{- if .ports }}
-    ports:
     {{- range .filters }}
+    {{- if .port }}
+    ports:
     - protocol: {{ .type }}
       port: {{ .port }}
       {{- if .endPort }}
