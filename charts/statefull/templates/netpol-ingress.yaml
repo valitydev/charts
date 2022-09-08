@@ -27,16 +27,16 @@ spec:
     - podSelector:
         matchLabels:
           selector.cilium/release: {{ $relname }}
-    {{- range .filters }}
-    {{- if .port }}
+    {{- if .filters }}
     ports:
+    {{- range .filters }}
     - protocol: {{ .type }}
       port: {{ .port }}
       {{- if .endPort }}
       endPort: {{ .endPort }}
       {{- end }}
     {{- end }}
-    {{- end}}
+    {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

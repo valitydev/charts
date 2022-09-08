@@ -19,7 +19,7 @@ spec:
           cidr: {{ $.Values.services.postgres.cidr }}
     ports:
     - protocol: TCP
-      port: {{ $.Values.services.postgres.port }}
+      port: {{ $.Values.services.postgres.port | default "5432" }}
   {{- else if eq .name "kafka" }}
   - to:
       - ipBlock:
@@ -50,9 +50,9 @@ spec:
           {{- else }}
           selector.cilium/release: {{ .name }}
           {{- end }}
-    {{- range .filters }}
-    {{- if .port }}
+    {{- if .filters }}
     ports:
+    {{- range .filters }}
     - protocol: {{ .type }}
       port: {{ .port }}
       {{- if .endPort }}

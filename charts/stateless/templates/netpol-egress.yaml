@@ -50,9 +50,9 @@ spec:
           {{- else }}
           selector.cilium/release: {{ .name }}
           {{- end }}
-    {{- range .filters }}
-    {{- if .port }}
+    {{- if .filters }}
     ports:
+    {{- range .filters }}
     - protocol: {{ .type }}
       port: {{ .port }}
       {{- if .endPort }}
