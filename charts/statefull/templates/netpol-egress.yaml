@@ -14,12 +14,14 @@ spec:
   egress:
   {{- range .Values.netPolicies }}
   {{- if eq .name "postgres" }}
+  {{- if $.Values.services.postgres.external }}
   - to:
       - ipBlock:
           cidr: {{ $.Values.services.postgres.cidr }}
     ports:
     - protocol: TCP
       port: {{ $.Values.services.postgres.port | default "5432" }}
+  {{- end }}
   {{- else if eq .name "kafka" }}
   - to:
       - ipBlock:

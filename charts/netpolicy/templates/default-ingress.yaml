@@ -1,4 +1,5 @@
----
+{{- if .Values.cilium }}
+{{- if .Values.cilium.enabled }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
@@ -50,3 +51,5 @@ specs:
             k8s:app.kubernetes.io/name: ingress-nginx
         - matchLabels:
             k8s:selector.cilium/release: test-transaction
+{{- end }}
+{{- end }}

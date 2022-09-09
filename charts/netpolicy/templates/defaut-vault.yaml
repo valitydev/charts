@@ -1,4 +1,5 @@
----
+{{- if .Values.cilium }}
+{{- if .Values.cilium.enabled }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
@@ -49,4 +50,5 @@ specs:
     endpointSelector:
       matchLabels:
         k8s:app.kubernetes.io/name: vault-agent-injector
-      
+{{- end }}
+{{- end }}
