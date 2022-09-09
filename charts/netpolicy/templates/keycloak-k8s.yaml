@@ -19,14 +19,14 @@ spec:
   {{- if .Values.services.postgres.external }}
       - ipBlock:
           cidr: {{ .Values.services.postgres.cidr }}
-  {{- else}}
+  {{- else }}
     - podSelector:
         matchLabels:
           selector.cilium/release: postgres
   {{- end }}
     ports:
       - protocol: TCP
-        port: {{ $.Values.services.postgres.port | default "5432" }}
+        port: {{ .Values.services.postgres.port | default "5432" }}
   ingress:
   - from:
     - podSelector:
