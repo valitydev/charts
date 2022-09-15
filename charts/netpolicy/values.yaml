@@ -9,3 +9,7 @@ services:
     external: false
   ingress:
     rootDomain: example.com
+
+extraEgressCiliumPolicy:
+  enabled: false
+#  policy: []
