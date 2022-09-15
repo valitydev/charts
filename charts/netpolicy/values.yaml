@@ -5,7 +5,7 @@ processingNamespace: ""
 services:
   postgres:
     external: false
-    cidrs: []
   kafka:
     external: false
-    cidrs: []
+  ingress:
+    rootDomain: example.com
