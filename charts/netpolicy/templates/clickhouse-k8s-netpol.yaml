@@ -9,6 +9,7 @@ spec:
       selector.cilium/release: clickhouse
   policyTypes:
     - Egress
+    - Ingress
   egress:
   - to:
   {{- if .Values.services.kafka.external }}
@@ -26,3 +27,12 @@ spec:
       port: 2181
     - protocol: TCP
       port: 2182
+  - to:
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: clickhouse
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: clickhouse
