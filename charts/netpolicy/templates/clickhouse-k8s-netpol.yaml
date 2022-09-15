@@ -6,13 +6,21 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      selector.cilium/release: clickhouse-operator
+      selector.cilium/release: clickhouse
   policyTypes:
     - Egress
   egress:
   - to:
+  {{- if .Values.services.kafka.external }}
+  {{- range .Values.services.kafka.cidrs }}
       - ipBlock:
-          cidr: {{ .Values.services.kafka.cidr }}
+          cidr: {{ . }}
+  {{- end}}
+  {{- else }}
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: kafka
+  {{- end }}
     ports:
     - protocol: TCP
       port: 2181

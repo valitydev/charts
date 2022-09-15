@@ -1,0 +1,16 @@
+{{- if .Values.cilium }}
+{{- if .Values.cilium.enabled }}
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: keycloak-operator-kube-api-egress.default
+  namespace: default
+spec:
+  endpointSelector:
+    matchLabels:
+      name: keycloak-operator
+  egress:
+  - toEntities:
+    - kube-apiserver
+{{- end }}
+{{- end }}

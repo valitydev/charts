@@ -17,8 +17,10 @@ spec:
           selector.cilium/release: keycloak
   - to:
   {{- if .Values.services.postgres.external }}
+  {{- range .Values.services.postgres.cidrs }}
       - ipBlock:
-          cidr: {{ .Values.services.postgres.cidr }}
+          cidr: {{ . }}
+  {{- end}}
   {{- else }}
     - podSelector:
         matchLabels:

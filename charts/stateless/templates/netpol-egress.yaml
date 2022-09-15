@@ -13,17 +13,23 @@ spec:
   - Egress
   egress:
   {{- range .Values.netPolicies }}
-  {{- if and (eq .name "postgres") $.Values.services.postgres.external }}
+  {{- if eq .name "postgres" }}
+  {{- if $.Values.services.postgres.external }}
   - to:
+  {{- range $.Values.services.postgres.cidrs }}
       - ipBlock:
-          cidr: {{ $.Values.services.postgres.cidr }}
+          cidr: {{ . }}
+  {{- end }}
     ports:
     - protocol: TCP
       port: {{ $.Values.services.postgres.port | default "5432" }}
-  {{- else if and (eq .name "kafka") $.Values.services.kafka.external }}
+  {{- end }}
+  {{- else if eq .name "kafka" }}
   - to:
+  {{- range $.Values.services.kafka.cidrs }}
       - ipBlock:
-          cidr: {{ $.Values.services.kafka.cidr }}
+          cidr: {{ . }}
+  {{- end }}
     ports:
     - protocol: TCP
       port: 9092
@@ -33,21 +39,14 @@ spec:
       port: 9096
     - protocol: TCP
       port: 9098
+    - protocol: TCP
+      port: 2181
   {{- else if eq .name "s3" }}
   - to:
   {{- range $.Values.services.s3.cidrs }}
       - ipBlock:
           cidr: {{ . }}
   {{- end }}
-  {{- else if and (eq .name "zookeeper") $.Values.services.kafka.external }}
-  - to:
-      - ipBlock:
-          cidr: {{ $.Values.services.kafka.cidr }}
-    ports:
-    - protocol: TCP
-      port: 2181
-    - protocol: TCP
-      port: 2182
   {{- else }}
   - to:
     - podSelector:

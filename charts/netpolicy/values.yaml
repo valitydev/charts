@@ -5,5 +5,7 @@ processingNamespace: ""
 services:
   postgres:
     external: false
+    cidrs: []
   kafka:
     external: false
+    cidrs: []

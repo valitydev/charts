@@ -16,16 +16,20 @@ spec:
   {{- if eq .name "postgres" }}
   {{- if $.Values.services.postgres.external }}
   - to:
+  {{- range $.Values.services.postgres.cidrs }}
       - ipBlock:
-          cidr: {{ $.Values.services.postgres.cidr }}
+          cidr: {{ . }}
+  {{- end }}
     ports:
     - protocol: TCP
       port: {{ $.Values.services.postgres.port | default "5432" }}
   {{- end }}
   {{- else if eq .name "kafka" }}
   - to:
+  {{- range $.Values.services.kafka.cidrs }}
       - ipBlock:
-          cidr: {{ $.Values.services.kafka.cidr }}
+          cidr: {{ . }}
+  {{- end }}
     ports:
     - protocol: TCP
       port: 9092
