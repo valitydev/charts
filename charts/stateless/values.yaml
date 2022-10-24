@@ -166,6 +166,8 @@ netPolicies: []
 cronjob:
   enabled: false
   schedule: "*/1 * * * *"
+  startingDeadlineSeconds: {}
+  restartPolicy: {}
   image:
     repository: docker.io/nginx
     tag: latest
