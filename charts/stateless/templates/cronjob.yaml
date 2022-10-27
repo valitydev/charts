@@ -13,6 +13,9 @@ spec:
   {{- if .Values.cronjob.startingDeadlineSeconds }}
   startingDeadlineSeconds: {{ .Values.cronjob.startingDeadlineSeconds }}
   {{- end }}
+  {{- if .Values.cronjob.activeDeadlineSeconds }}
+  activeDeadlineSeconds: {{ .Values.cronjob.activeDeadlineSeconds }}
+  {{- end }}
   jobTemplate:
     spec:
       {{- if .Values.cronjob.activeDeadlineSeconds }}
