@@ -18,6 +18,9 @@ spec:
   {{- end }}
   jobTemplate:
     spec:
+      {{- if .Values.cronjob.activeDeadlineSeconds }}
+      activeDeadlineSeconds: {{ .Values.cronjob.activeDeadlineSeconds }}
+      {{- end }}
       template:
         metadata:
           labels:
