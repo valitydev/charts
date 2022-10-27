@@ -167,6 +167,7 @@ cronjob:
   enabled: false
   schedule: "*/1 * * * *"
   startingDeadlineSeconds: {}
+  activeDeadlineSeconds: {}
   restartPolicy: {}
   image:
     repository: docker.io/nginx
