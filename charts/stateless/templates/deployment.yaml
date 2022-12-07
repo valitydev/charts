@@ -33,7 +33,7 @@ spec:
       initContainers:
     {{- if .Values.apiInitContainers.enabled }}
         - name: fetch-keycloack-pubkey
-          image: {{ .Values.apiInitContainers.image | default "ghcr.io/valitydev/holmes" }}
+          image: {{ .Values.apiInitContainers.image | default "ghcr.io/valitydev/busybox:1.32" }}
           env:
           - name: TARGET
             value: "/var/keycloak/keycloak.pubkey.pem"
