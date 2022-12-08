@@ -83,6 +83,14 @@ spec:
         {{- end }}
         {{- end }}
         {{- if .Values.livenessProbe }}
+          {{- if .Values.livenessProbe.httpGet }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.httpGet.path }}
+              port: {{ .Values.livenessProbe.httpGet.port }}
+            failureThreshold: 15
+            periodSeconds: 10
+          {{- end }}
           livenessProbe:
           {{- if .Values.livenessProbe.failureThreshold }}
             {{- toYaml .Values.livenessProbe | nindent 12 }}
