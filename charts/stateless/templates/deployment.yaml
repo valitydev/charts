@@ -14,6 +14,9 @@ spec:
     metadata:
       labels:
         {{ include "stateless.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
       annotations:
       {{- if or .Values.configMap .Values.secret }}
         config/checksum: {{ include "stateless.configHash" . }}
