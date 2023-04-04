@@ -7,7 +7,30 @@ configMap: {}
 #  binaryData: {}
 
 secret: {}
-#  data: ""
+#   data: ""
+#
+# If you need randomgenerated value of secretkey just use gendata with keys and empty values. Random generated secrets will be kept after upgrade:
+#
+#   gendata:
+#     secret-root-password: ""
+#     verysecret-phrase: ""
 
 ingress:
   enabled: false
+#   annotations: {}
+#   hosts:
+#     - host: superservice.{{ $ingressDomain | default "vality.dev" }}
+#       paths:
+#         - /
+# {{- if .Values.services.ingress.tls.enabled }}
+#   tls:
+#   {{ if .Values.services.ingress.tls.letsEncrypt.enabled }}
+#     - secretName: superservice-{{ .Values.services.ingress.tls.secretName }}
+#   {{- else }}
+#     - secretName: {{ .Values.services.ingress.tls.secretName }}
+#   {{- end }}
+#       hosts:
+#         - superservice.{{ $ingressDomain | default "vality.dev" }}
+# {{- end }}
+#   serviceName: superserviceololo
+#   servicePort: 8080

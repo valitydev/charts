@@ -22,6 +22,8 @@ podSecurityContext: {}
 
 podAnnotations: {}
 
+podLabels: {}
+
 configMap: {}
 #  data: {}
 #  binaryData: {}

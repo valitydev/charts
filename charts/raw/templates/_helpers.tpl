@@ -56,3 +56,24 @@ Create configs hash
 {{- define "raw.configHash" -}}
 {{ print .Values.configMap .Values.secret | sha256sum }}
 {{- end -}}
+
+{{/*
+Returns the available value for certain key in an existing secret (if it exists),
+otherwise it generates a random value.
+*/}}
+{{- define "getValueFromSecret" }}
+    {{- $len := (default 16 .Length) | int -}}
+    {{- $obj := (lookup "v1" "Secret" .ns .secret).data -}}
+    {{- if $obj }}
+        {{- index $obj .Key | b64dec -}}
+    {{- else -}}
+        {{- randAlphaNum $len -}}
+    {{- end -}}
+{{- end }}
+
+{{/*
+Return secret values
+*/}}
+{{- define "raw.password" -}}
+    {{- include "getValueFromSecret" (dict "Length" 16 "Key" .secretKey "ns" .Ns "secret" .secretName)  -}}
+{{- end -}}
