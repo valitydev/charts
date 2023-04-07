@@ -8,7 +8,7 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      name: keycloak-operator
+      name: keycloak
   egress:
   - toEntities:
     - kube-apiserver
