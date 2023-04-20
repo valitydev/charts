@@ -1,5 +1,4 @@
-{{- if .Values.netpolicy }}
-{{- if .Values.netpolicy.enabled }}
+{{- if and .Values.netpolicy .Values.netpolicy.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -13,23 +12,21 @@ spec:
   - Egress
   egress:
   {{- range .Values.netPolicies }}
-  {{- if eq .name "postgres" }}
-  {{- if $.Values.services.postgres.external }}
+    {{- if and (eq .name "postgres") $.Values.services.postgres.external }}
   - to:
-  {{- range $.Values.services.postgres.cidrs }}
+      {{- range $.Values.services.postgres.cidrs }}
       - ipBlock:
           cidr: {{ . }}
-  {{- end }}
+      {{- end }}
     ports:
     - protocol: TCP
       port: {{ $.Values.services.postgres.port | default "5432" }}
-  {{- end }}
-  {{- else if eq .name "kafka" }}
+    {{- else if eq .name "kafka" }}
   - to:
-  {{- range $.Values.services.kafka.cidrs }}
+      {{- range $.Values.services.kafka.cidrs }}
       - ipBlock:
           cidr: {{ . }}
-  {{- end }}
+      {{- end }}
     ports:
     - protocol: TCP
       port: 9092
@@ -41,13 +38,13 @@ spec:
       port: 9098
     - protocol: TCP
       port: 2181
-  {{- else if eq .name "s3" }}
+    {{- else if eq .name "s3" }}
   - to:
-  {{- range $.Values.services.s3.cidrs }}
+      {{- range $.Values.services.s3.cidrs }}
       - ipBlock:
           cidr: {{ . }}
-  {{- end }}
-  {{- else }}
+      {{- end }}
+    {{- else }}
   - to:
     - podSelector:
         matchLabels:
@@ -56,17 +53,16 @@ spec:
           {{- else }}
           selector.cilium/release: {{ .name }}
           {{- end }}
-    {{- if .filters }}
+      {{- if .filters }}
     ports:
-    {{- range .filters }}
+        {{- range .filters }}
     - protocol: {{ .type }}
       port: {{ .port }}
-      {{- if .endPort }}
+          {{- if .endPort }}
       endPort: {{ .endPort }}
+          {{- end }}
+        {{- end }}
       {{- end }}
-    {{- end }}
-    {{- end }}
-  {{- end }}  
+    {{- end }}  
   {{- end }}
-{{- end }}
 {{- end }}
