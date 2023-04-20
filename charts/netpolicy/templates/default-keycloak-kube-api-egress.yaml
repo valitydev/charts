@@ -3,7 +3,7 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: keycloak-operator-kube-api-egress.default
+  name: keycloak-kube-api-egress.default
   namespace: default
 spec:
   endpointSelector:
