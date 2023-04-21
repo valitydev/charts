@@ -167,6 +167,16 @@ entries:
     version: 0.1.11
   netpolicy:
   - apiVersion: v2
+    appVersion: 1.13.1
+    created: "2023-04-21T07:10:50.846884466Z"
+    description: A Helm chart for Kubernetes
+    digest: dc3e0e71e895dd20972441223842dba28fa8239a67799c03f1feb4ef7707e8ae
+    name: netpolicy
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/netpolicy-0.1.18/netpolicy-0.1.18.tgz
+    version: 0.1.18
+  - apiVersion: v2
     appVersion: 1.9.0
     created: "2022-06-20T15:51:14.718244046Z"
     description: A Helm chart for Kubernetes
@@ -334,6 +344,15 @@ entries:
   statefull:
   - apiVersion: v1
     appVersion: "1.0"
+    created: "2023-04-21T07:10:51.027688926Z"
+    description: A Helm chart for statefull vality services
+    digest: 3a159638d4b3ffc2ba1bd92a0e413eaf6a081a6072f46cad39ca4483f5c678a4
+    name: statefull
+    urls:
+    - https://github.com/valitydev/charts/releases/download/statefull-1.0.14/statefull-1.0.14.tgz
+    version: 1.0.14
+  - apiVersion: v1
+    appVersion: "1.0"
     created: "2023-03-23T11:39:42.642180903Z"
     description: A Helm chart for statefull vality services
     digest: 60cf3062b2b74686304ccc8e706d5adac0046ec8d53a81c7e6656b9899bd1ac1
@@ -450,6 +469,15 @@ entries:
     - https://github.com/valitydev/charts/releases/download/statefull-1.0.1/statefull-1.0.1.tgz
     version: 1.0.1
   stateless:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2023-04-21T07:10:51.255961034Z"
+    description: A Helm chart for stateless vality services
+    digest: 3e1267d6bc15c7cf799fa719f5581d7e0a5409a57a95f6567bae1a1e62864198
+    name: stateless
+    urls:
+    - https://github.com/valitydev/charts/releases/download/stateless-1.0.23/stateless-1.0.23.tgz
+    version: 1.0.23
   - apiVersion: v1
     appVersion: "1.0"
     created: "2023-03-23T11:39:42.797940394Z"
@@ -648,4 +676,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2023-03-23T11:39:42.798238301Z"
+generated: "2023-04-21T07:10:51.256192242Z"
