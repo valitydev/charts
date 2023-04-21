@@ -1,8 +1,8 @@
-{{- if .Values.netpolicy }}
-{{- if .Values.netpolicy.enabled }}
+{{- if and .Values.netpolicy .Values.netpolicy.enabled }}
 {{- $relname := .Release.Name -}}
 {{- $relnamespace := .Release.Namespace -}}
 {{ range .Values.netPolicies }}
+  {{- if or (ne .name "s3") (ne .name "kafka") (ne .name "postgres") }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -26,14 +26,16 @@ spec:
     - podSelector:
         matchLabels:
           selector.cilium/release: {{ $relname }}
+    {{- if .filters }}
     ports:
-    {{- range .filters }}
+      {{- range .filters }}
     - protocol: {{ .type }}
       port: {{ .port }}
-      {{- if .endPort }}
+        {{- if .endPort }}
       endPort: {{ .endPort }}
+        {{- end }}
       {{- end }}
     {{- end }}
-{{- end }}
+  {{- end }}
 {{- end }}
 {{- end }}

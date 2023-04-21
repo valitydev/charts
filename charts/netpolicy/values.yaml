@@ -2,3 +2,14 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 processingNamespace: ""
+services:
+  postgres:
+    external: false
+  kafka:
+    external: false
+  ingress:
+    rootDomain: example.com
+
+extraEgressCiliumPolicy:
+  enabled: false
+#  policy: []

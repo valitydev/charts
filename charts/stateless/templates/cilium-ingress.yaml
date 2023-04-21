@@ -1,5 +1,5 @@
 {{- if .Values.cilium }}
-{{- if .Values.cilium.enabled }}
+{{- if .Values.cilium.policy.enabled }}
 {{- $relname := .Release.Name -}}
 {{- $relnamespace := .Release.Namespace -}}
 {{ range .Values.netPolicies }}

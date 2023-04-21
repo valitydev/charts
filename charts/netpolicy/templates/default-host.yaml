@@ -1,19 +1,22 @@
----
+{{- if .Values.cilium }}
+{{- if .Values.cilium.enabled }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: "default.world"
+  name: "default.host"
   namespace: {{ .Values.processingNamespace | default .Release.Namespace }}
 specs:
   - endpointSelector:
       matchLabels:
-        k8s:io.kubernetes.pod.namespace: {{ .Values.processingNamespace | default .Release.Namespace }}
+        k8s:selector.cilium/release: machinegun-ha
     egress:
     - toEntities:
-        - world
+        - host
   - endpointSelector:
       matchLabels:
-        k8s:io.kubernetes.pod.namespace: {{ .Values.processingNamespace | default .Release.Namespace }}
+        k8s:selector.cilium/release: machinegun-ha
     ingress:
     - fromEntities:
-      - world
+      - host
+{{- end }}
+{{- end }}

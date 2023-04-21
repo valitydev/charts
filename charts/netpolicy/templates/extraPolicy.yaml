@@ -1,0 +1,56 @@
+{{- if .Values.cilium }}
+{{- if .Values.cilium.enabled }}
+{{- if .Values.extraEgressCiliumPolicy.enabled }}
+{{ range .Values.extraEgressCiliumPolicy.policy }}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: extra-{{ .name }}.default
+  namespace: {{ $.Values.processingNamespace | default $.Release.Namespace }}
+spec:
+  endpointSelector:
+    matchLabels:
+      k8s:selector.cilium/release: {{ .podLabel }}
+  egress:
+  - toEndpoints:
+    - matchLabels:
+       "k8s:io.kubernetes.pod.namespace": kube-system
+       "k8s:k8s-app": kube-dns
+    toPorts:
+      - ports:
+         - port: "53"
+           protocol: ANY
+        rules:
+          dns:
+          {{- if .matchName }}
+          {{- range .matchName }}
+            - matchName: "{{ . }}"
+          {{- end }}
+          {{- end }}
+          {{- if .matchPattern }}
+          {{- range .matchPattern }}
+            - matchPattern: "{{ . }}"
+          {{- end }}
+          {{- end }}
+  - toFQDNs:
+      {{- if .matchName }}
+      {{- range .matchName }}
+      - matchName: "{{ . }}"
+      {{- end }}
+      {{- end }}
+      {{- if .matchPattern }}
+      {{- range .matchPattern }}
+      - matchPattern: "{{ . }}"
+      {{- end }}
+      {{- end }}
+    toPorts:
+      - ports:
+         - port: "80"
+           protocol: TCP
+         - port: "443"
+           protocol: TCP
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

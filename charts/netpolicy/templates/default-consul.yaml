@@ -1,4 +1,5 @@
----
+{{- if .Values.cilium }}
+{{- if .Values.cilium.enabled }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
@@ -11,11 +12,13 @@ specs:
     egress:
     - toEndpoints:
         - matchLabels:
-            k8s:selector.cilium/release: machinegun
+            k8s:selector.cilium/release: machinegun-ha
   - endpointSelector:
       matchLabels:
-        k8s:selector.cilium/release: machinegun
+        k8s:selector.cilium/release: machinegun-ha
     ingress:
     - fromEndpoints:
         - matchLabels:
             k8s:selector.cilium/release: consul
+{{- end }}
+{{- end }}
