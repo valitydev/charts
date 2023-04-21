@@ -28,6 +28,10 @@ configMap: {}
 #  data: {}
 #  binaryData: {}
 
+cilium:
+  policy:
+    enabled: false
+
 secret: {}
 #  data: ""
 
