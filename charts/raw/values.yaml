@@ -34,3 +34,16 @@ ingress:
 # {{- end }}
 #   serviceName: superserviceololo
 #   servicePort: 8080
+
+hook:
+  enabled: false
+  kind: post-install
+  image:
+    repository: alpine
+    tag: stable
+    pullPolicy: IfNotPresent
+  command: []
+  volumes: []
+  volumeMounts: []
+
+  extraEnv: {}
