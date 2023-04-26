@@ -24,9 +24,9 @@ spec:
       containers:
         - name: {{ .Release.Name }}-init-job
           image: "{{ .Values.hook.image.repository }}:{{ .Values.hook.image.tag }}"
-        {{- if .Values.extraEnv }}
+        {{- if .Values.hook.extraEnv }}
           env:
-          {{- with .Values.extraEnv }}
+          {{- with .Values.hook.extraEnv }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
         {{- end }}
