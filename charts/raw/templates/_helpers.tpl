@@ -33,6 +33,7 @@ Common labels
 app.kubernetes.io/name: {{ include "raw.name" . }}
 helm.sh/chart: {{ include "raw.chart" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+selector.cilium/release: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
