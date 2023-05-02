@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{ .Release.Name }}-init-task"
+  name: "{{ .Release.Name }}-task"
   labels:
 {{ include "raw.labels" . | indent 4 }}
   annotations:
@@ -22,7 +22,7 @@ spec:
       {{- end }}
       restartPolicy: Never
       containers:
-        - name: {{ .Release.Name }}-init-job
+        - name: {{ .Release.Name }}-job
           image: "{{ .Values.hook.image.repository }}:{{ .Values.hook.image.tag }}"
         {{- if .Values.hook.extraEnv }}
           env:
