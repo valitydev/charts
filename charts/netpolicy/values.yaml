@@ -12,4 +12,17 @@ services:
 
 extraEgressCiliumPolicy:
   enabled: false
-#  policy: []
+#  policy:
+#  - name: beholder-fqdn
+#    podLabel: beholder
+#    matchPattern:
+#    - "*.{{ .Values.services.ingress.rootDomain | default "example.com" }}"
+#    - "*.lambdatest.com"
+
+extraWorldAccess:
+  enabled: false
+#  policy:
+#  - name: beholder-world
+#    podLabel: beholder
+#  - name: bouncer-policy-world
+#    podLabel: bouncer-policies
