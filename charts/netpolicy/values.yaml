@@ -13,3 +13,5 @@ services:
 extraEgressCiliumPolicy:
   enabled: false
 #  policy: []
+extraWorldAccess:
+  enabled: false
