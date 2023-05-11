@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: controller-to-default-ingress
+  name: monitoring-to-default-ingress
   namespace: {{ .Values.processingNamespace | default .Release.Namespace }}
 spec:
   podSelector: {}
@@ -9,4 +9,4 @@ spec:
   - from:
     - namespaceSelector:
         matchLabels:
-          kubernetes.io/metadata.name: ingress
+          kubernetes.io/metadata.name: monitoring
