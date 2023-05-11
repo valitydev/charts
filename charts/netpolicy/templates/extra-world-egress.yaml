@@ -11,7 +11,11 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
+    {{- if eq .podLabel "adapters" }}
+      k8s:selector.cilium/group: {{ .podLabel }}
+    {{- else }}
       k8s:selector.cilium/release: {{ .podLabel }}
+    {{- end }}
   egress:
     - toEntities:
         - world
