@@ -20,6 +20,10 @@ spec:
         matchLabels:
           selector.cilium/release: consul
   - to:
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: vault
+  - to:
     - ipBlock:
         cidr: 13.33.243.0/24
   - to:
@@ -34,3 +38,7 @@ spec:
     - podSelector:
         matchLabels:
           selector.cilium/release: consul
+  - from: 
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: vault
