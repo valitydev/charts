@@ -168,6 +168,16 @@ entries:
   netpolicy:
   - apiVersion: v2
     appVersion: 1.13.1
+    created: "2023-05-15T14:58:36.339064556Z"
+    description: A Helm chart for Kubernetes
+    digest: fac2f6378f7fa015391848987398b19170791e313b9a349896a0652ddf0b8a41
+    name: netpolicy
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/netpolicy-0.1.23/netpolicy-0.1.23.tgz
+    version: 0.1.23
+  - apiVersion: v2
+    appVersion: 1.13.1
     created: "2023-05-11T13:03:03.282284804Z"
     description: A Helm chart for Kubernetes
     digest: 3244d2b6a5dacc9d64a809925b1ab73611482d779170885174bc523435239653
@@ -734,4 +744,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2023-05-11T13:03:03.282418811Z"
+generated: "2023-05-15T14:58:36.339321251Z"
