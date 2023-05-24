@@ -1,0 +1,36 @@
+{{- if .Values.extraCidrPolicy }}
+{{- range .Values.extraCidrPolicy.policy }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .name }}-cidr-policy
+  namespace: {{ $.Values.processingNamespace | default $.Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- if .podLabel }}
+      selector.cilium/release: {{ .podLabel }}
+      {{- else }}
+      {{ .customLabel }}
+      {{- end }}
+  policyTypes:
+    - Egress
+  egress:
+  - to:
+    {{- range .cidrs }}
+    - ipBlock:
+        cidr: {{ . }}
+    {{- end }}
+    {{- if .ports }}
+    ports:
+    {{- range .ports }}
+    - protocol: {{ .type }}
+      port: {{ .port }}
+      {{- if .endPort }}
+      endPort: {{ .endPort }}      
+      {{- end }}
+    {{- end }}
+    {{- end }}
+{{- end }}
+{{- end }}

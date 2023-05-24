@@ -36,3 +36,7 @@ spec:
     - podSelector:
         matchLabels:
           selector.cilium/release: clickhouse
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: redash

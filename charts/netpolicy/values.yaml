@@ -10,7 +10,10 @@ services:
   ingress:
     rootDomain: example.com
 
-extraEgressCiliumPolicy:
+holmesFullAccess:
+  enabled: false
+
+extraFqdnCiliumPolicy:
   enabled: false
 #  policy:
 #  - name: beholder-fqdn
@@ -26,3 +29,31 @@ extraWorldAccess:
 #    podLabel: beholder
 #  - name: bouncer-policy-world
 #    podLabel: bouncer-policies
+
+extraPolicy: {}
+#  policy:
+#  - name: deanonimus-es-extra
+#    podLabel: deanonimus-es
+#    to:
+#      targetLabel: deanonimus-es
+#      ports:
+#      - port: 9200
+#        type: TCP
+#      - port: 9300
+#        type: TCP
+
+extraCidrPolicy: {}
+#  policy:
+#  - name: anal-to-anywhere
+#    podLabel: analytics
+#    cidr: 12.12.13.0/24
+#    ports:
+#    - port: 443
+#      type: TCP
+#    - port: 80
+#      type: TCP
+
+podToHostAccess: {}
+#  pods:
+#  - machinegun-ha
+#  - vault
