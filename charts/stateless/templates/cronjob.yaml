@@ -22,7 +22,6 @@ spec:
         metadata:
           labels:
             selector.cilium/release: {{ .Release.Name }}
-            {{- include "stateless.labels" . | nindent 12 }}
         spec:
           {{- with .Values.imagePullSecrets }}
           imagePullSecrets:
