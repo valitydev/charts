@@ -50,7 +50,6 @@ data:
             profile: default
             quota: default
             networksIP:
-              - "::1"
               - "127.0.0.1"
             password: "default"
         ################################################
@@ -227,26 +226,6 @@ metadata:
     clickhouse.altinity.com/chop: {{ .Chart.AppVersion | quote }}
   namespace: {{ .Release.Namespace }}
 data:
-  01-clickhouse-01-listen.xml: |
-    <yandex>
-        <!-- Listen wildcard address to allow accepting connections from other containers and host network. -->
-        <listen_host>::</listen_host>
-        <listen_host>0.0.0.0</listen_host>
-        <listen_try>1</listen_try>
-    </yandex>
-  01-clickhouse-02-logger.xml: |
-    <yandex>
-        <logger>
-            <!-- Possible levels: https://github.com/pocoproject/poco/blob/develop/Foundation/include/Poco/Logger.h#L105 -->
-            <level>debug</level>
-            <log>/var/log/clickhouse-server/clickhouse-server.log</log>
-            <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
-            <size>1000M</size>
-            <count>10</count>
-            <!-- Default behavior is autodetection (log to console if not daemon mode and is tty) -->
-            <console>1</console>
-        </logger>
-    </yandex>
   01-clickhouse-03-query_log.xml: |
     <yandex>
         <query_log replace="1">
