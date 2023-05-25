@@ -3,6 +3,16 @@ entries:
   clickhouse:
   - apiVersion: v2
     appVersion: 21.12.4
+    created: "2023-05-25T14:16:12.344859558Z"
+    description: A Clickhouse-cluster Helm chart for Kubernetes
+    digest: e5ed131ece4526d891fdb8f8cb105eaa252255bce554774eeffceb0f47483948
+    name: clickhouse
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/clickhouse-0.1.21/clickhouse-0.1.21.tgz
+    version: 0.1.21
+  - apiVersion: v2
+    appVersion: 21.12.4
     created: "2023-01-10T15:22:10.481364543Z"
     description: A Clickhouse-cluster Helm chart for Kubernetes
     digest: f7c65ae962b16b2ded5df827a1e9cf4c0985c7560a381e685b3e4dd85bca5c8a
@@ -82,6 +92,15 @@ entries:
     - https://github.com/valitydev/charts/releases/download/clickhouse-0.1.13/clickhouse-0.1.13.tgz
     version: 0.1.13
   clickhouse-operator:
+  - apiVersion: v1
+    appVersion: "0.18"
+    created: "2023-05-25T14:16:12.512623835Z"
+    description: A Helm chart for clickhouse operator
+    digest: ef45d56a300ae858d5b96ee65ce4dc71a06b6b27264102aa4ac4ee093da3e803
+    name: clickhouse-operator
+    urls:
+    - https://github.com/valitydev/charts/releases/download/clickhouse-operator-0.1.8/clickhouse-operator-0.1.8.tgz
+    version: 0.1.8
   - apiVersion: v1
     appVersion: "0.18"
     created: "2022-04-23T13:27:46.480940111Z"
@@ -753,4 +772,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2023-05-22T18:43:49.355182151Z"
+generated: "2023-05-25T14:16:12.512775738Z"
