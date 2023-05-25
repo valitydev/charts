@@ -98,7 +98,7 @@ spec:
         # type ObjectMeta struct from k8s.io/meta/v1
         metadata:
           labels:
-            {{- include "clickhouse.labels" . | nindent 12 }}
+            {{- include "clickhouse.selectorLabels" . | nindent 12 }}
         # type ServiceSpec struct from k8s.io/core/v1
         spec:
           ports:
@@ -115,7 +115,7 @@ spec:
         {{- end }}
         metadata:
           labels:
-            {{- include "clickhouse.labels" . | nindent 12 }}
+            {{- include "clickhouse.selectorLabels" . | nindent 12 }}
           {{- if or .Values.podAnnotations }}
           annotations:
           {{- with .Values.podAnnotations }}
@@ -148,7 +148,7 @@ spec:
         {{- end }}
         metadata:
           labels:
-            {{- include "clickhouse.labels" . | nindent 12 }}
+            {{- include "clickhouse.selectorLabels" $ | nindent 12 }}
         {{- if or $.Values.podAnnotations }}
           annotations:
           {{- with $.Values.podAnnotations }}
