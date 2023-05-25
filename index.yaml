@@ -3,6 +3,16 @@ entries:
   clickhouse:
   - apiVersion: v2
     appVersion: 21.12.4
+    created: "2023-05-25T17:07:04.302328456Z"
+    description: A Clickhouse-cluster Helm chart for Kubernetes
+    digest: 36ece292c034313c338335598f78200445f057322f9aba9621393926fff08013
+    name: clickhouse
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/clickhouse-0.1.23/clickhouse-0.1.23.tgz
+    version: 0.1.23
+  - apiVersion: v2
+    appVersion: 21.12.4
     created: "2023-05-25T14:47:06.366053798Z"
     description: A Clickhouse-cluster Helm chart for Kubernetes
     digest: 5d2fbc18f8d33490a6981e656078ce8e665f568a0d808c98809cfb1e4189bb78
@@ -782,4 +792,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2023-05-25T14:47:06.366212308Z"
+generated: "2023-05-25T17:07:04.303630169Z"
