@@ -11,3 +11,29 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+netPolicies: []
+  # - name: consul
+  #   namespace: default
+  #   filters:
+  #     - port: 8500
+  #       type: TCP
+  # - name: riak
+  #   filters:
+  #    - port: 6000
+  #      endPort: 7999
+  #      type: TCP
+  # - name: kafka
+  #   namespace: default
+  #   filters:
+  #     - port: 9092
+  #       type: TCP
+  #       rules:
+  #         kafka:
+  #         - role: produce
+  #           topics:
+  #             - bla1
+  #             - blah-blah-2
+  #         - role: consume
+  #           topics:
+  #             - bla1
+  #             - bla2

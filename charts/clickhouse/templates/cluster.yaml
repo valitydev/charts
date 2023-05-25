@@ -160,6 +160,12 @@ spec:
             - name: clickhouse
               image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
               imagePullPolicy: {{ $.Values.image.pullPolicy }}
+            {{- if or $.Values.securityContext }}
+              securityContext:
+              {{- with $.Values.securityContext }}
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+            {{- end }}
             {{- if or $.Values.livenessProbe }}
               livenessProbe:
               {{- with $.Values.livenessProbe }}
