@@ -31,6 +31,7 @@ Common labels
 */}}
 {{- define "clickhouse.labels" -}}
 helm.sh/chart: {{ include "clickhouse.chart" . }}
+selector.cilium/release: {{ .Release.Name }}
 app.kubernetes.io/name: {{ include "clickhouse.name" . }}
 {{ include "clickhouse.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
