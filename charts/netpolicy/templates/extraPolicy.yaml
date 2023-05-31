@@ -1,56 +1,81 @@
-{{- if .Values.cilium }}
-{{- if .Values.cilium.enabled }}
-{{- if .Values.extraEgressCiliumPolicy.enabled }}
-{{ range .Values.extraEgressCiliumPolicy.policy }}
+{{- if .Values.extraPolicy }}
+{{- range .Values.extraPolicy.policy }}
 ---
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
-  name: extra-{{ .name }}.default
+  name: {{ .name }}-egress-policy
   namespace: {{ $.Values.processingNamespace | default $.Release.Namespace }}
 spec:
-  endpointSelector:
+  podSelector:
     matchLabels:
-      k8s:selector.cilium/release: {{ .podLabel }}
+      {{- if .podLabel }}
+      selector.cilium/release: {{ .podLabel }}
+      {{- else }}
+      {{ .customLabel }}
+      {{- end }}
+  policyTypes:
+    - Egress
   egress:
-  - toEndpoints:
-    - matchLabels:
-       "k8s:io.kubernetes.pod.namespace": kube-system
-       "k8s:k8s-app": kube-dns
-    toPorts:
-      - ports:
-         - port: "53"
-           protocol: ANY
-        rules:
-          dns:
-          {{- if .matchName }}
-          {{- range .matchName }}
-            - matchName: "{{ . }}"
+  - to:
+    - podSelector:
+        matchLabels:
+          {{- if .to.targetLabel }}
+          selector.cilium/release: {{ .to.targetLabel }}
+          {{- else }}
+          {{ .to.customTargetLabel }}
           {{- end }}
+      {{- if .to.namespace }}
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ .to.namespace | default $.Release.Namespace }}
+      {{- end }}
+    {{- if .to.ports }}
+    ports:
+    {{- range .to.ports }}
+    - protocol: {{ .type }}
+      port: {{ .port }}
+      {{- if .endPort }}
+      endPort: {{ .endPort }}      
+      {{- end }}
+    {{- end }}
+    {{- end  }}
+---
+{{- if not .to.namespace }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .name }}-ingress-policy
+  namespace: {{ $.Values.processingNamespace | default $.Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- if .to.targetLabel }}
+      selector.cilium/release: {{ .to.targetLabel }}
+      {{- else }}
+      {{ .to.customTargetLabel }}
+      {{- end }}
+  policyTypes:
+    - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          {{- if .podLabel }}
+          selector.cilium/release: {{ .podLabel }}
+          {{- else }}
+          {{ .customLabel }}
           {{- end }}
-          {{- if .matchPattern }}
-          {{- range .matchPattern }}
-            - matchPattern: "{{ . }}"
-          {{- end }}
-          {{- end }}
-  - toFQDNs:
-      {{- if .matchName }}
-      {{- range .matchName }}
-      - matchName: "{{ . }}"
+    {{- if .to.ports }}
+    ports:
+    {{- range .to.ports }}
+    - protocol: {{ .type }}
+      port: {{ .port }}
+      {{- if .endPort }}
+      endPort: {{ .endPort }}
       {{- end }}
-      {{- end }}
-      {{- if .matchPattern }}
-      {{- range .matchPattern }}
-      - matchPattern: "{{ . }}"
-      {{- end }}
-      {{- end }}
-    toPorts:
-      - ports:
-         - port: "80"
-           protocol: TCP
-         - port: "443"
-           protocol: TCP
-{{- end }}
+    {{- end }}
+    {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

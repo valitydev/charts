@@ -1,22 +1,52 @@
 {{- if .Values.cilium }}
 {{- if .Values.cilium.enabled }}
+{{- if .Values.podToHostAccess }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: "default.host"
   namespace: {{ .Values.processingNamespace | default .Release.Namespace }}
 specs:
+  {{- if .Values.podToHostAccess.podLabel }}
+  {{- range .Values.podToHostAccess.podLabel }}
   - endpointSelector:
       matchLabels:
-        k8s:selector.cilium/release: machinegun-ha
+        k8s:selector.cilium/release: {{ . }}
     egress:
     - toEntities:
         - host
+  {{- end }}
+  {{- end }}
+  {{- if .Values.podToHostAccess.customLabels }}
+  {{- range .Values.podToHostAccess.customLabels }}
   - endpointSelector:
       matchLabels:
-        k8s:selector.cilium/release: machinegun-ha
+        {{ . }}
+    egress:
+    - toEntities:
+        - host
+  {{- end }}
+  {{- end }}
+  {{- if .Values.podToHostAccess.podLabel }}
+  {{- range .Values.podToHostAccess.podLabel }}
+  - endpointSelector:
+      matchLabels:
+        k8s:selector.cilium/release: {{ . }}
     ingress:
     - fromEntities:
-      - host
+        - host
+  {{- end }}
+  {{- end }}
+  {{- if .Values.podToHostAccess.podLabel }}
+  {{- range .Values.podToHostAccess.podLabel }}
+  - endpointSelector:
+      matchLabels:
+        k8s:selector.cilium/release: {{ . }}
+    ingress:
+    - fromEntities:
+        - host
+  {{- end }}
+  {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
