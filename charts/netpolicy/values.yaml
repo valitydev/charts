@@ -54,6 +54,6 @@ extraCidrPolicy: {}
 #      type: TCP
 
 podToHostAccess: {}
-#  pods:
+#  podLabel:
 #  - machinegun-ha
 #  - vault
