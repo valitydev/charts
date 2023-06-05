@@ -164,6 +164,23 @@ netPolicies: []
   #           topics:
   #             - bla1
   #             - bla2
+  # - cidrs:
+  #   - 1.1.1.1
+  #   filters:
+  #   - port: 80222
+  #     type: TCP
+  #   - port: 80221
+  #     type: TCP
+  #   name: cidr-xyz
+  # - cidrs:
+  #   - 1.1.1.1
+  #   - 1.1.1.1
+  #   - 1.1.1.1
+  #   - 1.1.1.1
+  #   filters:
+  #   - port: 8022
+  #     type: TCP
+  #   name: cidr-abc
  
 storage: {}
 #  accessModes: ["ReadWriteOnce"]

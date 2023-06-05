@@ -15,8 +15,8 @@ spec:
     {{- if and (eq .name "postgres") $.Values.services.postgres.external }}
   - to:
       {{- range $.Values.services.postgres.cidrs }}
-      - ipBlock:
-          cidr: {{ . }}
+    - ipBlock:
+        cidr: {{ . }}
       {{- end }}
     ports:
     - protocol: TCP
@@ -44,7 +44,23 @@ spec:
       - ipBlock:
           cidr: {{ . }}
       {{- end }}
-    {{- else }}
+    {{- else if (regexMatch "^cidr-.*" .name) }}
+  - to:
+      {{- range .cidrs }}
+      - ipBlock:
+          cidr: {{ . }}
+      {{- end }}
+      {{- if .filters }}
+    ports:
+        {{- range .filters }}
+    - protocol: {{ .type }}
+      port: {{ .port }}
+          {{- if .endPort }}
+      endPort: {{ .endPort }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- else if ne .name "world" }}
   - to:
     - podSelector:
         matchLabels:
@@ -63,6 +79,6 @@ spec:
           {{- end }}
         {{- end }}
       {{- end }}
-    {{- end }}  
+    {{- end }}
   {{- end }}
 {{- end }}
