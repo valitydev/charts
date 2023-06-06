@@ -60,7 +60,7 @@ spec:
           {{- end }}
         {{- end }}
       {{- end }}
-    {{- else if ne .name "world" }}
+    {{- else if and (ne .name "world") (not (regexMatch "^fqdn-.*" .name)) }}
   - to:
     - podSelector:
         matchLabels:

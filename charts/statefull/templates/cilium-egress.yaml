@@ -1,20 +1,104 @@
-{{- if .Values.cilium }}
-{{- if .Values.netPolicies }}
-{{- range .Values.netPolicies }}
-  {{- if eq .name "world" }}
-apiVersion: cilium.io/v2
+{{- if .Values.cilium.enabled }}
+{{- if .Values.cilium.policy.enabled }}
+apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: {{ $.Release.Name }}-world-cnp-egress
-  namespace: {{ $.Values.processingNamespace | default $.Release.Namespace }}
+  name: {{ .Release.Name }}-egress
+  namespace: {{ .Release.Namespace }}
 spec:
   endpointSelector:
     matchLabels:
-      k8s:selector.cilium/release: {{ $.Release.Name }}
+      k8s:selector.cilium/release: {{ .Release.Name }}
   egress:
-    - toEntities:
-        - world
+  {{- range .Values.netPolicies }}
+    {{- if and (eq .name "postgres") $.Values.services.postgres.external }}
+  - toCIDR:
+      {{- range $.Values.services.postgres.cidrs }}
+    - {{ . }}
+      {{- end }}
+    toPorts:
+    - ports:
+      - protocol: TCP
+        port: {{ $.Values.services.postgres.port | default "5432" }}
+    {{- else if eq .name "kafka" }}
+  - toCIDR:
+      {{- range $.Values.services.kafka.cidrs }}
+    - {{ . }}
+      {{- end }}
+    toPorts:
+    - ports:
+      - protocol: TCP
+        port: 9092
+      - protocol: TCP
+        port: 9094
+      - protocol: TCP
+        port: 9096
+      - protocol: TCP
+        port: 9098
+      - protocol: TCP
+        port: 2181
+    {{- else if eq .name "s3" }}
+  - toCIDR:
+      {{- range $.Values.services.s3.cidrs }}
+    - {{ . }}
+      {{- end }}
+    {{- else if (regexMatch "^cidr-.*" .name) }}
+  - toCIDR:
+      {{- range .cidrs }}
+    - {{ . }}
+      {{- end }}
+      {{- if .filters }}
+    toPorts:
+    - ports:
+        {{- range .filters }}
+      - protocol: {{ .type }}
+        port: {{ .port }}
+        {{- if .endPort }}
+        endPort: {{ .endPort }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- else if (regexMatch "^fqdn-.*" .name) }}
+  - toFQDNs:
+      {{- if .domainName }}
+        {{- range .domainName }}
+      - matchName: "{{ . }}"
+        {{- end }}
+      {{- end }}
+      {{- if .domainPattern }}
+        {{- range .domainPattern }}
+      - matchPattern: "{{ . }}"
+        {{- end }}
+      {{- end }}
+      {{- if .filters }}
+        {{- range .filters }}
+      - protocol: {{ .type }}
+        {{- if .endPort }}
+        port: {{ printf "%s-%s" .port .endPort }}
+        {{- else}}
+        port: {{ .port | quote }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- else if ne .name "world" }}
+  - toEndpoints:
+    - matchLabels:
+        {{- if .group }}
+        k8s:selector.cilium/group: {{ .group }}
+        {{- else }}
+        k8s:selector.cilium/release: {{ .name }}
+        {{- end }}
+    toPorts:
+    - ports:
+      {{- range .filters }}
+      - protocol: {{ .type }}
+        {{- if .endPort }}
+        port: {{ printf "%s-%s" .port .endPort }}
+        {{- else}}
+        port: {{ .port | quote }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
   {{- end }}
-{{- end }}
 {{- end }}
 {{- end }}
