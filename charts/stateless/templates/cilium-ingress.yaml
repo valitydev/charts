@@ -3,6 +3,7 @@
 {{- $relname := .Release.Name -}}
 {{- $relnamespace := .Release.Namespace -}}
 {{ range .Values.netPolicies }}
+  {{- if and (ne .name "s3") (ne .name "kafka") (ne .name "postgres") (ne .name "world") (not (regexMatch "^cidr-.*" .name)) (not (regexMatch "^fqdn-.*" .name)) }}
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -11,7 +12,7 @@ metadata:
   name: {{ $relname }}-{{ .group }}-ingress
   {{- else }}
   name: {{ $relname }}-{{ .name }}-ingress
-  {{- end}}
+  {{- end }}
   namespace: {{ $relnamespace }}
 spec:
   endpointSelector:
@@ -46,6 +47,7 @@ spec:
         {{- end }}
       {{- end }}
     {{- end }}
+  {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

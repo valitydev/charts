@@ -2,7 +2,7 @@
 {{- $relname := .Release.Name -}}
 {{- $relnamespace := .Release.Namespace -}}
 {{ range .Values.netPolicies }}
-  {{- if or (ne .name "s3") (ne .name "kafka") (ne .name "postgres") }}
+  {{- if and (ne .name "s3") (ne .name "kafka") (ne .name "postgres") (ne .name "world") (not (regexMatch "^cidr-.*" .name)) (not (regexMatch "^fqdn-.*" .name)) }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -28,13 +28,13 @@ spec:
           selector.cilium/release: {{ $relname }}
     {{- if .filters }}
     ports:
-    {{- range .filters }}
+      {{- range .filters }}
     - protocol: {{ .type }}
       port: {{ .port }}
-      {{- if .endPort }}
+        {{- if .endPort }}
       endPort: {{ .endPort }}
+        {{- end }}
       {{- end }}
-    {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}

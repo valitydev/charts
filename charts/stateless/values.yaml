@@ -143,31 +143,54 @@ logs:
   json: false
 
 netPolicies: []
-  # - name: consul
-  #   namespace: default
-  #   filters:
-  #     - port: 8500
-  #       type: TCP
-  # - name: riak
-  #   filters:
-  #    - port: 6000
-  #      endPort: 7999
-  #      type: TCP
-  # - name: kafka
-  #   namespace: default
-  #   filters:
-  #     - port: 9092
-  #       type: TCP
-  #       rules:
-  #         kafka:
-  #         - role: produce
-  #           topics: 
-  #             - bla1
-  #             - blah-blah-2
-  #         - role: consume
-  #           topics:
-  #             - bla1
-  #             - bla2
+# - name: consul
+#   namespace: default
+#   filters:
+#     - port: 8500
+#       type: TCP
+# - name: riak
+#   filters:
+#    - port: 6000
+#      endPort: 7999
+#      type: TCP
+# - name: kafka
+#   namespace: default
+#   filters:
+#     - port: 9092
+#       type: TCP
+#       rules:
+#         kafka:
+#         - role: produce
+#           topics: 
+#             - bla1
+#             - blah-blah-2
+#         - role: consume
+#           topics:
+#             - bla1
+#             - bla2
+# - cidrs:
+#   - 1.1.1.1
+#   filters:
+#   - port: 80222
+#     type: TCP
+#   - port: 80221
+#     type: TCP
+#   name: cidr-xyz
+# - cidrs:
+#   - 1.1.1.1
+#   - 1.1.1.1
+#   - 1.1.1.1
+#   - 1.1.1.1
+#   filters:
+#   - port: 8022
+#     type: TCP
+#   name: cidr-abc
+## Cilium policy enabled only
+# - name: fqdn-hut
+#   domainName:
+#   - "asdlzxc.com"
+#   domainPattern:
+#   -  "*.cas.*.com"
 
 cronjob:
   enabled: false
