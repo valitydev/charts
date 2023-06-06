@@ -1,5 +1,4 @@
 {{- if .Values.cilium }}
-{{- if .Values.netPolicies }}
 {{- if not .Values.cilium.policy.enabled }}
 {{- range .Values.netPolicies }}
   {{- if eq .name "world" }}
@@ -16,7 +15,6 @@ spec:
     - toEntities:
         - world
   {{- end }}
-{{- end }}  
 {{- end }}
 {{- end }}
 {{- end }}
