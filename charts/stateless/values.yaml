@@ -58,6 +58,7 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
+  annotations: {}
   type: ClusterIP
   ports:
     - name: api
@@ -141,6 +142,9 @@ metrics:
 logs:
   enabled: true
   json: false
+
+TopologyAwareRouting:
+  enabled: false
 
 netPolicies: []
 # - name: consul
