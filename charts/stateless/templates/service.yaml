@@ -4,6 +4,17 @@ metadata:
   name: {{ include "stateless.fullname" . }}
   labels:
 {{ include "stateless.labels" . | indent 4 }}
+  {{- if or .Values.service.annotations .Values.TopologyAwareRouting.enabled }}
+  annotations:
+    {{- if .Values.TopologyAwareRouting.enabled }}
+    service.kubernetes.io/topology-aware-hints: auto
+    {{- end }}
+    {{- if .Values.service.annotations }}
+    {{- with .Values.service.annotations }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- end }}
+  {{- end }}
 spec:
   type: {{ .Values.service.type }}
   ports:
