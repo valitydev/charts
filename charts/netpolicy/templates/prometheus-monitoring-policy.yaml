@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: prometheus-monitoring-policy
+  namespace: {{ .Values.monitoringNamespace | default "monitoring" }}
+spec:
+  podSelector:
+    matchLabels:
+      selector.cilium/release: prometheus
+  policyTypes:
+    - Egress
+    - Ingress
+  egress:
+  - {}
+  ingress:
+  - {}

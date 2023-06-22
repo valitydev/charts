@@ -1,0 +1,22 @@
+{{- if .Values.cilium }}
+{{- if .Values.cilium.enabled }}
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "monitoring.host"
+  namespace: {{ .Values.monitoringNamespace | default "monitoring" }}
+specs:
+  - endpointSelector:
+      matchLabels:
+        app: fleet
+    ingress:
+    - fromEntities:
+        - host
+  - endpointSelector:
+      matchLabels:
+        k8s:selector.cilium/release: fluent-bit
+    ingress:
+    - fromEntities:
+        - host
+{{- end }}
+{{- end }}

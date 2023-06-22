@@ -1,0 +1,51 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: opensearch-data-policy
+  namespace: monitoring
+spec:
+  podSelector:
+    matchLabels:
+      selector.cilium/release: opensearch-data
+  policyTypes:
+    - Ingress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: opensearch-data
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: prometheus
+  - from: 
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: fluent-bit
+  - from: 
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: opensearch-dashboard
+  - from:
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: opensearch-data
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: opensearch-dashboard-policy
+  namespace: monitoring
+spec:
+  podSelector:
+    matchLabels:
+      selector.cilium/release: opensearch-data
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: opensearch-data
