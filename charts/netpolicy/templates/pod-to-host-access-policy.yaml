@@ -1,0 +1,35 @@
+{{- if .Values.cilium }}
+{{- if .Values.cilium.enabled }}
+{{- if .Values.podToHostAccess }}
+{{- range .Values.podToHostAccess }}
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ .name }}-to-host
+  namespace: {{ .namespace | default $.Release.Namespace }}
+specs:
+  - endpointSelector:
+      matchLabels:
+        {{- if .podLabel }}
+        selector.cilium/release: {{ .podLabel }}
+        {{- else }}
+        {{ .customLabel }}
+        {{- end }}
+    egress:
+    - toEntities:
+        - host
+  - endpointSelector:
+      matchLabels:
+        {{- if .podLabel }}
+        selector.cilium/release: {{ .podLabel }}
+        {{- else }}
+        {{ .customLabel }}
+        {{- end }}
+    ingress:
+    - fromEntities:
+        - host
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -5,7 +5,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: {{ .name }}-egress-policy
-  namespace: {{ $.Values.processingNamespace | default $.Release.Namespace }}
+  namespace: {{ .namespace | default $.Release.Namespace }}
 spec:
   podSelector:
     matchLabels:
@@ -41,12 +41,11 @@ spec:
     {{- end }}
     {{- end  }}
 ---
-{{- if not .to.namespace }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: {{ .name }}-ingress-policy
-  namespace: {{ $.Values.processingNamespace | default $.Release.Namespace }}
+  namespace: {{ .to.namespace | default $.Release.Namespace }}
 spec:
   podSelector:
     matchLabels:
@@ -66,6 +65,11 @@ spec:
           {{- else }}
           {{ .customLabel }}
           {{- end }}
+      {{- if .to.namespace }}
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ .namespace | default $.Release.Namespace }}
+      {{- end }}
     {{- if .to.ports }}
     ports:
     {{- range .to.ports }}
@@ -76,6 +80,5 @@ spec:
       {{- end }}
     {{- end }}
     {{- end }}
-{{- end }}
 {{- end }}
 {{- end }}
