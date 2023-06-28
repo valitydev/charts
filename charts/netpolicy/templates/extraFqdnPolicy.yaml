@@ -7,7 +7,7 @@ apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: extra-{{ .name }}.default
-  namespace: {{ $.Values.processingNamespace | default $.Release.Namespace }}
+  namespace: {{ .namespace | default $.Release.Namespace }}
 spec:
   endpointSelector:
     matchLabels:

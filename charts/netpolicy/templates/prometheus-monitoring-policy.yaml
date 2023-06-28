@@ -1,0 +1,53 @@
+{{- if and .Values.prometheus .Values.prometheus.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: prometheus-cilium-label-monitoring-policy
+  namespace: {{ .Values.monitoringNamespace | default "monitoring" }}
+spec:
+  podSelector:
+    matchLabels:
+      selector.cilium/release: prometheus
+  policyTypes:
+    - Egress
+    - Ingress
+  egress:
+  - {}
+  ingress:
+  - {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: prometheus-instance-label-monitoring-policy
+  namespace: {{ .Values.monitoringNamespace | default "monitoring" }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: prometheus
+  policyTypes:
+    - Egress
+    - Ingress
+  egress:
+  - {}
+  ingress:
+  - {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: prometheus-other-monitoring-policy
+  namespace: {{ .Values.monitoringNamespace | default "monitoring" }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: prometheus-kube-prometheus-prometheus
+  policyTypes:
+    - Egress
+    - Ingress
+  egress:
+  - {}
+  ingress:
+  - {}
+{{- end }}
