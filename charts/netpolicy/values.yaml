@@ -41,14 +41,24 @@ extraPolicy: {}
 #      ports:
 #      - port: 9200
 #        type: TCP
-#      - port: 9300
+#  - name: anyapp-to-anyapp-db-extra
+#    namespace: somenamespace
+#    customLabel: 'app: anyapp' 
+#    to:
+#      customTargetLabel: "app.kubernetes.io/instance: any-app-db"
+#      namespace: somenamespace
+#      ports:
+#      - port: 3306
 #        type: TCP
 
 extraCidrPolicy: {}
 #  policy:
 #  - name: anal-to-anywhere
 #    podLabel: analytics
-#    cidr: 12.12.13.0/24
+## If the reverse rule is required
+#    reversed: true
+#    cidrs: 
+#    - 12.12.13.0/24
 #    ports:
 #    - port: 443
 #      type: TCP
@@ -56,6 +66,11 @@ extraCidrPolicy: {}
 #      type: TCP
 
 podToHostAccess: {}
-#  podLabel:
-#  - machinegun-ha
-#  - vault
+#  - name: machinegun-ha
+#    podLabel: machinegun-ha
+#  - name: fluent-bit
+#    namespace: monitoring
+#    podLabel: fluent-bit
+#  - name: fleet
+#    customLabel: 'app: fleet'
+#    namespace: monitoring
