@@ -1,19 +1,63 @@
 {{- if .Values.cilium.enabled }}
 {{- if not .Values.cilium.policy.enabled }}
 {{- range .Values.netPolicies }}
-  {{- if eq .name "world" }}
+  {{- if or (eq .name "world") (regexMatch "^fqdn-.*" .name) }}
+---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: {{ $.Release.Name }}-world-cnp-egress
+  name: {{ $.Release.Name }}-{{ .name }}-egress
   namespace: {{ $.Values.processingNamespace | default $.Release.Namespace }}
 spec:
   endpointSelector:
     matchLabels:
       k8s:selector.cilium/release: {{ $.Release.Name }}
   egress:
+  {{- if eq .name "world" }}
     - toEntities:
         - world
+  {{- else if regexMatch "^fqdn-.*" .name }}
+  - toEndpoints:
+    - matchLabels:
+       "k8s:io.kubernetes.pod.namespace": kube-system
+       "k8s:k8s-app": kube-dns
+    toPorts:
+      - ports:
+         - port: "53"
+           protocol: ANY
+        rules:
+          dns:
+          {{- if .matchName }}
+          {{- range .matchName }}
+            - matchName: "{{ . }}"
+          {{- end }}
+          {{- end }}
+          {{- if .matchPattern }}
+          {{- range .matchPattern }}
+            - matchPattern: "{{ . }}"
+          {{- end }}
+          {{- end }}
+  - toFQDNs:
+      {{- if .matchName }}
+      {{- range .matchName }}
+      - matchName: "{{ . }}"
+      {{- end }}
+      {{- end }}
+      {{- if .matchPattern }}
+      {{- range .matchPattern }}
+      - matchPattern: "{{ . }}"
+      {{- end }}
+      {{- end }}
+    toPorts:
+      - ports:
+          {{- range .filters }}
+        - protocol: {{ .type }}
+          port: {{ .port }}
+          {{- if .endPort }}
+          endPort: {{ .endPort }}
+          {{- end }}
+          {{- end }}
+  {{- end }}
   {{- end }}
 {{- end }}
 {{- end }}

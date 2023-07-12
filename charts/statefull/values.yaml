@@ -182,11 +182,20 @@ netPolicies: []
 #     type: TCP
 #   name: cidr-abc
 ## Cilium policy enabled only
-# - name: fqdn-hut
-#   domainName:
-#   - "asdlzxc.com"
-#   domainPattern:
-#   -  "*.cas.*.com"
+## Cilium policy enabled only
+# - filters:
+#   - port: 8022
+#     type: TCP
+#   matchPattern:
+#   - "*.example.com"
+#   name: fqdn-example
+# - filters:
+#   - port: 8022
+#     type: TCP
+#   matchName:
+#   - "example"
+#   - "1.example.com"
+#   name: fqdn-example2
  
 storage: {}
 #  accessModes: ["ReadWriteOnce"]
