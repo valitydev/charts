@@ -44,6 +44,8 @@ apiInitContainers:
 
 extraInitContainers: []
 
+sidecarContainers: []
+
 securityContext: {}
   # capabilities:
   #   drop:
