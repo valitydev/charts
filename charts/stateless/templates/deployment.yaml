@@ -55,7 +55,7 @@ spec:
             - name: keycloak-pubkey
               mountPath: /var/keycloak
     {{- end }}
-    {{- with .Values.extrainitContainers }}
+    {{- with .Values.extraInitContainers }}
         {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- end }}
@@ -107,6 +107,9 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
         {{- end }}
+    {{- with .Values.sidecarContainers }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
     {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
