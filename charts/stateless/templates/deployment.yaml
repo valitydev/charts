@@ -55,7 +55,7 @@ spec:
             - name: keycloak-pubkey
               mountPath: /var/keycloak
     {{- end }}
-    {{- with .Values.extrainitContainers }}
+    {{- with .Values.extraInitContainers }}
         {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- end }}
@@ -85,31 +85,21 @@ spec:
             {{- toYaml . | nindent 10 }}
         {{- end }}
         {{- end }}
-        {{- if .Values.livenessProbe }}
-          {{- if .Values.livenessProbe.httpGet }}
+        {{- if .Values.readinessProbe }}
+          {{- if .Values.readinessProbe.httpGet }}
           startupProbe:
             httpGet:
-              path: {{ .Values.livenessProbe.httpGet.path }}
-              port: {{ .Values.livenessProbe.httpGet.port }}
+              path: {{ .Values.readinessProbe.httpGet.path }}
+              port: {{ .Values.readinessProbe.httpGet.port }}
             failureThreshold: 18
             periodSeconds: 10
           {{- end }}
           livenessProbe:
-          {{- if .Values.livenessProbe.failureThreshold }}
             {{- toYaml .Values.livenessProbe | nindent 12 }}
-          {{- else }}
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
-            failureThreshold: 6
-          {{- end }}
         {{- end }}
         {{- if .Values.readinessProbe }}
           readinessProbe:
-          {{- if .Values.readinessProbe.failureThreshold }}
             {{- toYaml .Values.readinessProbe | nindent 12 }}
-          {{- else }}
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
-            failureThreshold: 6
-          {{- end }}
         {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
@@ -117,6 +107,9 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
         {{- end }}
+    {{- with .Values.sidecarContainers }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
     {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
