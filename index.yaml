@@ -207,6 +207,16 @@ entries:
   netpolicy:
   - apiVersion: v2
     appVersion: 1.13.1
+    created: "2023-09-01T12:05:52.684859733Z"
+    description: A Helm chart for Kubernetes
+    digest: 66938971e9b809fec8bf0a89ddab639da77db1f10ad26893908e735992ab203b
+    name: netpolicy
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/netpolicy-0.1.26/netpolicy-0.1.26.tgz
+    version: 0.1.26
+  - apiVersion: v2
+    appVersion: 1.13.1
     created: "2023-06-28T13:02:48.349647806Z"
     description: A Helm chart for Kubernetes
     digest: 6f8ac959ff742dad5c071f5f2e0a3531662ba9d6ea439e933e8b1fd925d76b8b
@@ -471,6 +481,15 @@ entries:
   statefull:
   - apiVersion: v1
     appVersion: "1.0"
+    created: "2023-09-01T12:05:52.829617397Z"
+    description: A Helm chart for statefull vality services
+    digest: 71e26c9332dd715ba0e31428bf5ae27656e7e53f03676ef9062e27eaea1dcafe
+    name: statefull
+    urls:
+    - https://github.com/valitydev/charts/releases/download/statefull-1.0.18/statefull-1.0.18.tgz
+    version: 1.0.18
+  - apiVersion: v1
+    appVersion: "1.0"
     created: "2023-08-08T14:44:54.908270857Z"
     description: A Helm chart for statefull vality services
     digest: 8d575f0aa71a9aac19db2ef7b373af3635ab84e5659c2efe548d9cd7fa8d2397
@@ -623,6 +642,15 @@ entries:
     - https://github.com/valitydev/charts/releases/download/statefull-1.0.1/statefull-1.0.1.tgz
     version: 1.0.1
   stateless:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2023-09-01T12:05:52.958619408Z"
+    description: A Helm chart for stateless vality services
+    digest: f6721b0d19f4191846dc4fc0694075c7fc57a1dbd4640b834fdcceb233a3ecac
+    name: stateless
+    urls:
+    - https://github.com/valitydev/charts/releases/download/stateless-1.0.29/stateless-1.0.29.tgz
+    version: 1.0.29
   - apiVersion: v1
     appVersion: "1.0"
     created: "2023-08-08T14:44:55.094049695Z"
@@ -875,4 +903,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2023-08-08T14:44:55.096133416Z"
+generated: "2023-09-01T12:05:52.959101737Z"
