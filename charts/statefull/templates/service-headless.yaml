@@ -5,7 +5,7 @@ metadata:
   name: {{ include "statefull.fullname" . }}-headless
   labels:
 {{ include "statefull.labels" . | indent 4 }}
-    headless: true
+    headless: "true"
 spec:
   type: {{ .Values.service.type }}
   clusterIP: None
