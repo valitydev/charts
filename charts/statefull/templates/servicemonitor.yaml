@@ -23,4 +23,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "statefull.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
+    matchExpressions:
+      - key: headless
+        operator: DoesNotExist
 {{- end }}
