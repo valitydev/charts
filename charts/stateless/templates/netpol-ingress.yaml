@@ -1,6 +1,5 @@
 {{- if and .Values.netpolicy .Values.netpolicy.enabled }}
 {{- $relname := .Release.Name -}}
-{{- $relnamespace := .Release.Namespace -}}
 {{ range .Values.netPolicies }}
   {{- if and (ne .name "s3") (ne .name "kafka") (ne .name "postgres") (ne .name "world") (not (regexMatch "^cidr-.*" .name)) (not (regexMatch "^fqdn-.*" .name)) }}
 ---
@@ -11,8 +10,8 @@ metadata:
   name: {{ $relname }}-{{ .group }}-ingress
   {{- else }}
   name: {{ $relname }}-{{ .name }}-ingress
-  {{- end}}
-  namespace: {{ $relnamespace }}
+  {{- end }}
+  namespace: {{ .namespace | default $.Release.Namespace }}
 spec:
   podSelector:
     matchLabels:
@@ -26,6 +25,50 @@ spec:
     - podSelector:
         matchLabels:
           selector.cilium/release: {{ $relname }}
+      {{- if .namespace }}
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ .namespace | default $.Release.Namespace }}
+      {{- end }}
+    {{- if .filters }}
+    ports:
+      {{- range .filters }}
+    - protocol: {{ .type }}
+      port: {{ .port }}
+        {{- if .endPort }}
+      endPort: {{ .endPort }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- else if or (and (eq .name "kafka") (not $.Values.services.kafka.external)) (and (eq .name "postgres") (not $.Values.services.postgres.external)) }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  {{- if .group }}
+  name: {{ $relname }}-{{ .group }}-ingress
+  {{- else }}
+  name: {{ $relname }}-{{ .name }}-ingress
+  {{- end }}
+  namespace: {{ .namespace | default $.Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- if .group }}
+      selector.cilium/group: {{ .group }}
+      {{- else }}
+      selector.cilium/release: {{ .name }}
+      {{- end }}
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          selector.cilium/release: {{ $relname }}
+      {{- if .namespace }}
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ .namespace | default $.Release.Namespace }}
+      {{- end }}
     {{- if .filters }}
     ports:
       {{- range .filters }}
