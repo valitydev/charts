@@ -17,6 +17,8 @@ serviceAccount:
   create: true
   name: ""
 
+strategyRecreate: false
+
 podSecurityContext: {}
   # fsGroup: 2000
 
