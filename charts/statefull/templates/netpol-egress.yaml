@@ -21,7 +21,7 @@ spec:
     ports:
     - protocol: TCP
       port: {{ $.Values.services.postgres.port | default "5432" }}
-    {{- else if eq .name "kafka" }}
+    {{- else if and (eq .name "kafka") $.Values.services.kafka.external }}
   - to:
       {{- range $.Values.services.kafka.cidrs }}
       - ipBlock:
@@ -69,6 +69,11 @@ spec:
           {{- else }}
           selector.cilium/release: {{ .name }}
           {{- end }}
+      {{- if .namespace }}
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ .namespace | default $.Release.Namespace }}
+      {{- end }}
       {{- if .filters }}
     ports:
         {{- range .filters }}

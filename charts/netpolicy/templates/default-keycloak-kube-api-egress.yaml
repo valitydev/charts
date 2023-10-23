@@ -4,7 +4,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: keycloak-kube-api-egress.default
-  namespace: default
+  namespace: {{ .Values.processingNamespace | default .Release.Namespace }}
 spec:
   endpointSelector:
     matchLabels:
