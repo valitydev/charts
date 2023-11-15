@@ -54,13 +54,24 @@ spec:
               containerPort: {{ .port }}
               protocol: TCP
           {{- end }}
+        {{- if .Values.readinessProbe }}
+          startupProbe:
+          {{- if .Values.readinessProbe.httpGet }}
+            httpGet:
+              path: {{ .Values.readinessProbe.httpGet.path }}
+              port: {{ .Values.readinessProbe.httpGet.port }}
+          {{- else if .Values.readinessProbe.exec }}  
+            exec:
+              command: {{ .Values.readinessProbe.exec.command }}
+          {{- end }}
+            failureThreshold: 18
+            periodSeconds: 10
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+        {{- end }}
         {{- if .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
-        {{- end }}
-        {{- if .Values.readinessProbe }}
-          readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
         {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
