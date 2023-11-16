@@ -91,6 +91,7 @@ readinessProbe:
   httpGet:
     path: /health
     port: api
+startupProbe: {}
 
 ingress:
   enabled: false
