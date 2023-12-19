@@ -28,7 +28,7 @@ spec:
       {{- if .namespace }}
       namespaceSelector:
         matchLabels:
-          kubernetes.io/metadata.name: {{ .namespace | default $.Release.Namespace }}
+          kubernetes.io/metadata.name: {{ $.Release.Namespace }}
       {{- end }}
     {{- if .filters }}
     ports:
@@ -67,7 +67,7 @@ spec:
       {{- if .namespace }}
       namespaceSelector:
         matchLabels:
-          kubernetes.io/metadata.name: {{ .namespace | default $.Release.Namespace }}
+          kubernetes.io/metadata.name: {{ default $.Release.Namespace }}
       {{- end }}
     {{- if .filters }}
     ports:
