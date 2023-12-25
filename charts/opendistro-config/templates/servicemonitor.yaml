@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: opensearch-{{ .Values.clusterName }}-data
+  name: opensearch-{{ .Values.clusterName }}
   {{- if .Values.metrics.serviceMonitor.namespace }}
   namespace: {{ .Values.metrics.serviceMonitor.namespace }}
   {{- end }}
@@ -22,6 +22,5 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: opensearch-{{ .Values.clusterName }}
-      app.kubernetes.io/instance: opensearch-data
       opensearch.io/headless: "False"
 {{- end }}
