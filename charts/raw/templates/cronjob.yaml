@@ -1,0 +1,51 @@
+{{- if .Values.cronjob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "raw.fullname" . }}-cj
+  labels:
+    {{- include "raw.labels" . | nindent 4 }}
+spec:
+  schedule: "{{ .Values.cronjob.schedule }}"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  {{- if .Values.cronjob.startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ .Values.cronjob.startingDeadlineSeconds }}
+  {{- end }}
+  jobTemplate:
+    spec:
+      {{- if .Values.cronjob.activeDeadlineSeconds }}
+      activeDeadlineSeconds: {{ .Values.cronjob.activeDeadlineSeconds }}
+      {{- end }}
+      backoffLimit: {{ .Values.cronjob.backoffLimit | default 3 }}
+      template:
+        metadata:
+          labels:
+            selector.cilium/release: {{ .Release.Name }}
+        spec:
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: {{ .Release.Name }}-cj
+              image: "{{ .Values.cronjob.image.repository }}:{{ .Values.cronjob.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.cronjob.image.pullPolicy }}
+              {{- if .Values.cronjob.command }}
+              command: {{ .Values.cronjob.command }}
+              {{- end }}
+              args:
+                {{- toYaml .Values.cronjob.args | nindent 16 }}
+              {{- with .Values.cronjob.volumeMounts }}
+              volumeMounts:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+          {{- with .Values.cronjob.volumes }}
+          volumes:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          restartPolicy: {{ .Values.cronjob.restartPolicy | default "OnFailure" }}
+          successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit | default 1 }}
+          failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit | default 1 }}
+{{- end }}
