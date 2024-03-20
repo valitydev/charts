@@ -6,6 +6,14 @@ configMap: {}
 #  data: {}
 #  binaryData: {}
 
+cronjob:
+  enabled: false
+  # schedule: "0 1 * * *"
+  # image: {}
+  # command: []
+  # args: []
+  # restartPolicy: OnFailure
+
 secret: {}
 #   data: ""
 #
