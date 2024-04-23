@@ -1,0 +1,7 @@
+# Default values for origin-issuer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+issuerName: cloudflare-origin-issuer
+secret: 
+  origin_ca_api_key: "v1.0-FFFFFFF-FFFFFFFF"
