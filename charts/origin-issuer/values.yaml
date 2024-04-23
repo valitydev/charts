@@ -5,3 +5,10 @@
 issuerName: cloudflare-origin-issuer
 secret: 
   origin_ca_api_key: "v1.0-FFFFFFF-FFFFFFFF"
+certificate:
+  enabled: false
+  secretName: secret-example
+  domains:
+    - "example.com"
+    - "*.example.com"
+  duration: "168h"
