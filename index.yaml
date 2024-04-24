@@ -436,6 +436,16 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/opendistro-config-1.0.0/opendistro-config-1.0.0.tgz
     version: 1.0.0
+  origin-issuer:
+  - apiVersion: v2
+    appVersion: "1.0"
+    created: "2024-04-24T07:29:45.005291658Z"
+    description: A Helm chart for OriginIssuer
+    digest: b83ffbc4d7fc0bad2c04bd712014ad7b8ce050c9a1971d26df7e5f3bbfd0b2b9
+    name: origin-issuer
+    urls:
+    - https://github.com/valitydev/charts/releases/download/origin-issuer-1.0.0/origin-issuer-1.0.0.tgz
+    version: 1.0.0
   raw:
   - apiVersion: v1
     appVersion: "1.0"
@@ -1015,4 +1025,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2024-03-20T07:31:21.050448838Z"
+generated: "2024-04-24T07:29:45.005519694Z"
