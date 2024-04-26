@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "origin-issuer.name" -}}
+{{- define "cloudflare_collection.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "origin-issuer.fullname" -}}
+{{- define "cloudflare_collection.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "origin-issuer.chart" -}}
+{{- define "cloudflare_collection.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "origin-issuer.labels" -}}
-helm.sh/chart: {{ include "origin-issuer.chart" . }}
-{{ include "origin-issuer.selectorLabels" . }}
+{{- define "cloudflare_collection.labels" -}}
+helm.sh/chart: {{ include "cloudflare_collection.chart" . }}
+{{ include "cloudflare_collection.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "origin-issuer.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "origin-issuer.name" . }}
+{{- define "cloudflare_collection.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "cloudflare_collection.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "origin-issuer.serviceAccountName" -}}
+{{- define "cloudflare_collection.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "origin-issuer.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "cloudflare_collection.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

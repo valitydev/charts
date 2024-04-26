@@ -1,23 +1,22 @@
-{{ if .Values.certificate.enabled }}
+{{- if (and .Values.originIssuer.certificate.enabled .Values.originIssuer.enabled) }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: certificate-{{ .Release.Namespace }}-{{ include "origin-issuer.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  name: certificate-{{ .Release.Namespace }}-{{ include "cloudflare_collection.fullname" . }}
 spec:
   # The secret name where cert-manager should store the signed certificate
-  secretName: {{ .Values.certificate.secretName }}
+  secretName: {{ .Values.originIssuer.certificate.secretName }}
   dnsNames:
-  {{- range .Values.certificate.domains }}
+  {{- range .Values.originIssuer.certificate.domains }}
     - {{ . | quote }}
   {{- end }}
   # Duration of the certificate
-  duration: {{ .Values.certificate.duration }}
+  duration: {{ .Values.originIssuer.certificate.duration | default "168h" }}
   # Renew a day before the certificate expiration
   renewBefore: 24h
   # Reference the Origin CA Issuer you created above, which must be in the same namespace.
   issuerRef:
     group: cert-manager.k8s.cloudflare.com
     kind: OriginIssuer
-    name: {{ .Values.issuerName }}
-{{ end }}
+    name: {{ .Values.originIssuer.issuerName }}
+{{- end }}
