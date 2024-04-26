@@ -2,7 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: certificate-{{ .Release.Namespace }}-{{ include "cloudflare_collection.fullname" . }}
+  name: certificate-{{ .Release.Namespace }}-{{ include "cloudflare-collection.fullname" . }}
 spec:
   # The secret name where cert-manager should store the signed certificate
   secretName: {{ .Values.originIssuer.certificate.secretName }}

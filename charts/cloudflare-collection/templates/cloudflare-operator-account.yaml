@@ -1,4 +1,4 @@
-{{- if .Values.cloudflareOperator.enabled }}
+{{- if (and .Values.cloudflareOperator.enabled .Values.cloudflareOperator.accounts) }}
 {{- range .Values.cloudflareOperator.accounts }}
 ---
 apiVersion: cloudflare-operator.io/v1

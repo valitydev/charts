@@ -5,7 +5,7 @@
 # VERSION="v0.7.0"
 # kubectl apply -f https://raw.githubusercontent.com/cloudflare/origin-ca-issuer/${VERSION}/deploy/crds/cert-manager.k8s.cloudflare.com_originissuers.yaml
 originIssuer:
-  enabled: true
+  enabled: false
   issuerName: origin-issuer
   secret: 
     origin_ca_api_key: "v1.0-FFFFFFF-FFFFFFFF"
@@ -19,7 +19,7 @@ originIssuer:
 # As per the Helm best practices, cloudflareOperator Helm chart doesn’t ship with CRDs.
 # kubectl apply -f https://github.com/containeroo/cloudflareOperator/releases/latest/download/crds.yaml
 cloudflareOperator:
-  enabled: true
+  enabled: false
   accounts: 
     - zone: "example.com"
       secret: "account-zone-api-key"

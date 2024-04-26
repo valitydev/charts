@@ -1,5 +1,5 @@
 apiVersion: v2
 name: cloudflare-collection
-description: A Helm chart for OriginIssuer
+description: A Helm chart for Cloudflare tools
 version: 1.0.0
 appVersion: "1.0"

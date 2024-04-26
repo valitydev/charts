@@ -7,7 +7,7 @@ spec:
   requestType: OriginECC
   auth:
     serviceKeyRef:
-      name: secret-issuer-{{ include "cloudflare_collection.fullname" . }}
+      name: secret-issuer-{{ include "cloudflare-collection.fullname" . }}
       {{- range $path, $bytes := .Values.originIssuer.secret }}
       key: {{ $path }}
       {{- end }}
