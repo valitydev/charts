@@ -157,6 +157,16 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/clickhouse-operator-0.1.4/clickhouse-operator-0.1.4.tgz
     version: 0.1.4
+  cloudflare-collection:
+  - apiVersion: v2
+    appVersion: "1.0"
+    created: "2024-04-26T15:23:30.905272892Z"
+    description: A Helm chart for Cloudflare tools
+    digest: 5208fe098dce9c4f2080b69b3339ec461cb5454972c75a5000b8c6e0ccd69e19
+    name: cloudflare-collection
+    urls:
+    - https://github.com/valitydev/charts/releases/download/cloudflare-collection-1.0.0/cloudflare-collection-1.0.0.tgz
+    version: 1.0.0
   cp-kafka-connect:
   - apiVersion: v1
     appVersion: "1.0"
@@ -1025,4 +1035,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2024-04-24T07:29:45.005519694Z"
+generated: "2024-04-26T15:23:30.905505705Z"
