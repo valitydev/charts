@@ -1,0 +1,14 @@
+{{- if .Values.originIssuer.enabled }}
+apiVersion: cert-manager.k8s.cloudflare.com/v1
+kind: OriginIssuer
+metadata:
+  name: {{ .Values.originIssuer.issuerName }}
+spec:
+  requestType: OriginECC
+  auth:
+    serviceKeyRef:
+      name: secret-issuer-{{ include "cloudflare-collection.fullname" . }}
+      {{- range $path, $bytes := .Values.originIssuer.secret }}
+      key: {{ $path }}
+      {{- end }}
+{{- end }}

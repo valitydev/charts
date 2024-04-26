@@ -1,0 +1,14 @@
+{{- if (and .Values.cloudflareOperator.enabled .Values.cloudflareOperator.accounts) }}
+{{- range .Values.cloudflareOperator.accounts }}
+---
+apiVersion: cloudflare-operator.io/v1
+kind: Account
+metadata:
+  name: account-cloudflare-operator-{{ .zone }}
+spec:
+  apiToken:
+    secretRef: 
+      name: secret-cloudflare-operator-{{ .zone }}
+      namespace: {{ $.Release.Namespace }}
+{{- end }}
+{{- end }}

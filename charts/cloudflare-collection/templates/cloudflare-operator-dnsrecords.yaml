@@ -1,0 +1,16 @@
+{{- if (and .Values.cloudflareOperator.enabled .Values.cloudflareOperator.dnsRecords) }}
+{{- range $index, $record := .Values.cloudflareOperator.dnsRecords }}
+---
+apiVersion: cloudflare-operator.io/v1
+kind: DNSRecord
+metadata:
+  name: {{ $record.name | replace "." "-" | replace "*" "wildcard"}}-{{ $record.type }}-{{ $index }}
+spec:
+  name: {{ $record.name | quote }}
+  type: {{ $record.type | quote }}
+  content: {{ $record.content | quote}}
+  proxied: {{ $record.proxied | default false }}
+  ttl: {{ $record.ttl | default 1 }}
+  interval: {{ $record.interval | default "5m0s" | quote }}
+{{- end }}
+{{- end }}
