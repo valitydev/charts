@@ -13,6 +13,9 @@ cronjob:
   # command: []
   # args: []
   # restartPolicy: OnFailure
+  # nodeSelector: {}
+  # affinity: {}
+  # tolerations: []
 
 secret: {}
 #   data: ""
