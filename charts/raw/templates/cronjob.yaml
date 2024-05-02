@@ -45,6 +45,18 @@ spec:
           volumes:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.cronjob.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.cronjob.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.cronjob.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           restartPolicy: {{ .Values.cronjob.restartPolicy | default "OnFailure" }}
           successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit | default 1 }}
           failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit | default 1 }}
