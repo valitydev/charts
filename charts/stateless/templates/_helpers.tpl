@@ -35,7 +35,7 @@ helm.sh/chart: {{ include "stateless.chart" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 selector.cilium/release: {{ .Release.Name }}
 {{- if or (hasPrefix "adapter" .Release.Name) (hasPrefix "proxy" .Release.Name) }}
-{{- if hasSuffix "payout" .Release.Name }}
+{{- if contains "-payout" .Release.Name }}
 selector.cilium/group: adapters-payout
 {{- else }}
 selector.cilium/group: adapters
