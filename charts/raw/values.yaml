@@ -28,6 +28,7 @@ secret: {}
 
 ingress:
   enabled: false
+  ingressClassName: nginx
 #   annotations: {}
 #   hosts:
 #     - host: superservice.{{ $ingressDomain | default "vality.dev" }}
