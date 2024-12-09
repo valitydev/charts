@@ -1,18 +1,29 @@
 {
-    "index_patterns" : [
-      "{{ .Values.indexName }}-*"
-    ],
-    "template": {
-      "settings" : {
-      "opendistro": {
-          "index_state_management": {
-            "policy_id": "{{ .Values.indexName }}-ism-policy",
-            "rollover_alias": "{{ .Values.indexName }}"
+  "index_patterns" : [
+    "{{ .Values.indexName }}-*"
+  ],
+  "template": {
+    "settings": {
+      "index": {
+        "mapping": {
+          "total_fields": {
+            "limit": "3000"
           }
-      },
-      "index" : {
-        "number_of_shards" : "3",
-        "number_of_replicas" : "1"
+        },
+        "opendistro": {
+            "index_state_management": {
+              "policy_id": "{{ .Values.indexName }}-ism-policy",
+              "rollover_alias": "{{ .Values.indexName }}"
+            }
+        },
+        "refresh_interval": "60s",
+        "unassigned": {
+          "node_left": {
+            "delayed_timeout": "30m"
+          }
+        },
+        "number_of_replicas": "1",
+        "number_of_shards": "1"
       }
     },
     "mappings" : {
