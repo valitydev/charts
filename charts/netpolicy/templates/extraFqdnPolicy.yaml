@@ -9,13 +9,17 @@ metadata:
   name: extra-{{ .name }}.default
   namespace: {{ .namespace | default $.Release.Namespace }}
 spec:
+  {{- if or .podLabel .customLabel }}
   endpointSelector:
     matchLabels:
-      {{- if .podLabel }}
+    {{- if .podLabel }}
       k8s:selector.cilium/release: {{ .podLabel }}
-      {{- else }}
+    {{- else }}
       {{ .customLabel }}
-      {{- end }}
+    {{- end }}
+  {{- else }}
+  endpointSelector: {}
+  {{- end }}
   egress:
   - toFQDNs:
       {{- if .matchName }}
