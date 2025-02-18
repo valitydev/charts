@@ -1,0 +1,44 @@
+image:
+  repository: docker.io/elastic/auditbeat
+  tag: "7.12.1"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+tolerations: []
+
+resources: {}
+
+rbac:
+  create: true
+
+config: {}
+
+modules: {}
+
+rules: {}
+
+daemonset:
+  hostNetwork: true
+  hostPID: true
+
+env:
+  elasticsearchHost: elasticsearch
+  elasticsearchPort: "9200"
+  elasticsearchUsername: elastic
+  elasticsearchPassword: changeme
+  elasticCloudId: ""
+  elasticCloudAuth: ""
+
+extraVolumes: []
+extraVolumeMounts: []
