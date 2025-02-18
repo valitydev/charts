@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  auditbeat:
+  - apiVersion: v2
+    appVersion: 7.12.1
+    created: "2025-02-18T13:24:53.559001788Z"
+    description: Helm chart for deploying Auditbeat in Kubernetes
+    digest: 6723b08739dacc36b267088cf477a569880078d0fbaff74bd036cf89e811e274
+    name: auditbeat
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/auditbeat-0.1.0/auditbeat-0.1.0.tgz
+    version: 0.1.0
   clickhouse:
   - apiVersion: v2
     appVersion: 21.12.4
@@ -1120,4 +1131,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2025-01-17T14:52:16.573151698Z"
+generated: "2025-02-18T13:24:53.559226158Z"
