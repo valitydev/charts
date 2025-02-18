@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "auditbeat.fullname" . }}
+  labels:
+    {{- include "auditbeat.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "auditbeat.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        {{- include "auditbeat.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "auditbeat.serviceAccountName" . }}
+      terminationGracePeriodSeconds: 30
+      hostNetwork: {{ .Values.daemonset.hostNetwork }}
+      hostPID: {{ .Values.daemonset.hostPID }}
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: {{ include "auditbeat.fullname" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args:
+          - "-c"
+          - "/etc/auditbeat.yml"
+          - "-e"
+        env:
+          - name: ELASTICSEARCH_HOST
+            value: {{ quote .Values.env.elasticsearchHost }}
+          - name: ELASTICSEARCH_PORT
+            value: {{ quote .Values.env.elasticsearchPort }}
+          - name: ELASTICSEARCH_USERNAME
+            value: {{ quote .Values.env.elasticsearchUsername }}
+          - name: ELASTICSEARCH_PASSWORD
+            value: {{ quote .Values.env.elasticsearchPassword }}
+          - name: ELASTIC_CLOUD_ID
+            value: {{ quote .Values.env.elasticCloudId }}
+          - name: ELASTIC_CLOUD_AUTH
+            value: {{ quote .Values.env.elasticCloudAuth }}
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        securityContext:
+          runAsUser: 0
+          capabilities:
+            add:
+              - AUDIT_READ
+              - AUDIT_WRITE
+              - AUDIT_CONTROL
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        volumeMounts:
+          - name: config
+            mountPath: /etc/auditbeat.yml
+            readOnly: true
+            subPath: auditbeat.yml
+          - name: modules
+            mountPath: /usr/share/auditbeat/modules.d
+            readOnly: true
+          - name: data
+            mountPath: /usr/share/auditbeat/data
+          - name: bin
+            mountPath: /hostfs/bin
+            readOnly: true
+          - name: sbin
+            mountPath: /hostfs/sbin
+            readOnly: true
+          - name: usrbin
+            mountPath: /hostfs/usr/bin
+            readOnly: true
+          - name: usrsbin
+            mountPath: /hostfs/usr/sbin
+            readOnly: true
+          - name: etc
+            mountPath: /hostfs/etc
+            readOnly: true
+          - name: run-containerd
+            mountPath: /run/containerd
+            readOnly: true
+        {{- with .Values.extraVolumeMounts }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      volumes:
+        - name: bin
+          hostPath:
+            path: /bin
+        - name: usrbin
+          hostPath:
+            path: /usr/bin
+        - name: sbin
+          hostPath:
+            path: /sbin
+        - name: usrsbin
+          hostPath:
+            path: /usr/sbin
+        - name: etc
+          hostPath:
+            path: /etc
+        - name: config
+          configMap:
+            defaultMode: 0640
+            name: {{ include "auditbeat.fullname" . }}-config
+        - name: modules
+          configMap:
+            defaultMode: 0640
+            name: {{ include "auditbeat.fullname" . }}-modules
+        - name: data
+          hostPath:
+            path: /var/lib/auditbeat-data
+            type: DirectoryOrCreate
+        - name: run-containerd
+          hostPath:
+            path: /run/containerd
+            type: DirectoryOrCreate      
+    {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }} 
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+

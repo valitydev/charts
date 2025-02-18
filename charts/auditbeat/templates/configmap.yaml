@@ -1,0 +1,47 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "auditbeat.fullname" . }}-config
+  labels: {{ include "auditbeat.labels" . | nindent 4 }}
+data:
+{{- range $configName, $configYaml := .Values.config }}
+  {{ $configName }}: |
+  {{- if eq (kindOf $configYaml) "map" }}
+    {{- tpl (toYaml $configYaml) $ | nindent 4 }}
+  {{- else }}
+    {{- tpl $configYaml $ | nindent 4 }}
+  {{- end }}
+{{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "auditbeat.fullname" . }}-modules
+  labels: {{ include "auditbeat.labels" . | nindent 4 }}
+data:
+{{- range $moduleName, $moduleYaml := .Values.modules }}
+  {{ $moduleName }}: |
+  {{- if eq (kindOf $moduleYaml) "map" }}
+    {{- tpl (toYaml $moduleYaml) $ | nindent 4 }}
+  {{- else }}
+    {{- tpl $moduleYaml $ | nindent 4 }}
+  {{- end }}
+{{- end }}
+---
+{{- if .Values.rules }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "auditbeat.fullname" . }}-rules
+  labels: {{ include "auditbeat.labels" . | nindent 4 }}
+data:
+{{- range $ruleName, $ruleYaml := .Values.rules }}
+  {{ $ruleName }}: |
+  {{- if eq (kindOf $ruleYaml) "map" }}
+    {{- tpl (toYaml $ruleYaml) $ | nindent 4 }}
+  {{- else }}
+    {{- tpl $ruleYaml $ | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}
