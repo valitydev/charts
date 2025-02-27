@@ -11,6 +11,17 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/auditbeat-0.1.0/auditbeat-0.1.0.tgz
     version: 0.1.0
+  clamav:
+  - apiVersion: v2
+    appVersion: 1.4.2
+    created: "2025-02-27T13:54:27.830509836Z"
+    description: Helm chart for deploying clamav in Kubernetes
+    digest: 18a959deb9d4602d3def21536c095a1d67889196607d87d5434157a0635b0270
+    name: clamav
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/clamav-0.1.0/clamav-0.1.0.tgz
+    version: 0.1.0
   clickhouse:
   - apiVersion: v2
     appVersion: 21.12.4
@@ -1131,4 +1142,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2025-02-18T13:24:53.559226158Z"
+generated: "2025-02-27T13:54:27.830728243Z"
