@@ -69,7 +69,6 @@ scan:
 cronjob:
   enabled: true
   schedule: "0 3 * * *"
-  scanPath: "/var/data"
 
 config:
   clamd.conf: |-
