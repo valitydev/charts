@@ -1,0 +1,30 @@
+{{- if .Values.cronjob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "clamav.fullname" . }}-scan
+  labels:
+    {{- include "clamav.labels" . | nindent 4 }}
+spec:
+  schedule: "{{ .Values.cronjob.schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ include "clamav.serviceAccountName" . }}
+          restartPolicy: OnFailure
+          containers:
+            - name: trigger-scan
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  for ip in $(getent ahostsv4 {{ include "clamav.fullname" . }} | grep STREAM  | awk '{print $1}'); do
+                    echo "Sending SCAN to pod $ip";
+                    {{- range .Values.scan.directories }}
+                    echo "SCAN {{ . }}" | nc $ip 3310;
+                    {{- end }}
+                  done
+{{- end }}

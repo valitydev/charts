@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "clamav.fullname" . }}-config
+  labels: {{ include "clamav.labels" . | nindent 4 }}
+data:
+{{- range $configName, $configYaml := .Values.config }}
+  {{ $configName }}: |
+  {{- if eq (kindOf $configYaml) "map" }}
+    {{- tpl (toYaml $configYaml) $ | nindent 4 }}
+  {{- else }}
+    {{- tpl $configYaml $ | nindent 4 }}
+  {{- end }}
+{{- end }}

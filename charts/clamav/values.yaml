@@ -1,0 +1,102 @@
+image:
+  repository: docker.io/clamav/clamav
+  tag: "1.4.2"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+tolerations: []
+
+resources: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 100
+  runAsGroup: 101
+  fsGroup: 101
+
+securityContext:
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  privileged: false
+  capabilities:
+    add:
+      - CHOWN
+      - DAC_READ_SEARCH
+
+startupProbe:
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  failureThreshold: 3
+  timeoutSeconds: 1
+
+livenessProbe:
+  initialDelaySeconds: 300
+  periodSeconds: 10
+  failureThreshold: 3
+  timeoutSeconds: 1
+
+readinessProbe:
+  initialDelaySeconds: 90
+  periodSeconds: 10
+  failureThreshold: 3
+  timeoutSeconds: 1
+
+daemonset:
+  hostNetwork: false
+  hostPID: false
+
+scan:
+  directories:
+    - "/var/data"
+    - "/home"
+    - "/tmp"
+    - "/var/www"
+    - "/etc"
+    - "/usr/local/bin"
+  excludeDirs: []
+
+cronjob:
+  enabled: true
+  schedule: "0 3 * * *"
+  scanPath: "/var/data"
+
+config:
+  clamd.conf: |-
+    LogTime yes
+    LogClean yes
+    TemporaryDirectory /tmp
+    DatabaseDirectory /data
+    PidFile /tmp/clamd.pid
+    LocalSocket /tmp/clamd.sock
+    FixStaleSocket yes
+    TCPSocket 3310
+    TCPAddr 0.0.0.0
+    MaxFileSize 100M
+    MaxRecursion 16
+    MaxFiles 10000
+    ScanMail yes
+    ScanArchive yes
+    ArchiveBlockEncrypted no
+
+  freshclam.conf: |-
+    PidFile /tmp/freshclam.pid
+    DatabaseDirectory /data
+    TestDatabases no
+    DatabaseMirror http://3.76.123.140
+    LogTime yes
+    LogVerbose yes
+    Checks 24
+
+extraVolumes: []
+extraVolumeMounts: []
