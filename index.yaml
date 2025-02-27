@@ -14,6 +14,16 @@ entries:
   clamav:
   - apiVersion: v2
     appVersion: 1.4.2
+    created: "2025-02-27T14:04:42.455249719Z"
+    description: Helm chart for deploying clamav in Kubernetes
+    digest: d73289e2a6ded5387f23efb88ffc562be1cb11d53eda4979a9ef96fafd495869
+    name: clamav
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/clamav-0.1.1/clamav-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.4.2
     created: "2025-02-27T13:54:27.830509836Z"
     description: Helm chart for deploying clamav in Kubernetes
     digest: 18a959deb9d4602d3def21536c095a1d67889196607d87d5434157a0635b0270
@@ -1142,4 +1152,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2025-02-27T13:54:27.830728243Z"
+generated: "2025-02-27T14:04:42.455505273Z"
