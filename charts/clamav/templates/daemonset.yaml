@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "clamav.fullname" . }}
+  labels:
+    {{- include "clamav.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "clamav.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        {{- include "clamav.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "clamav.serviceAccountName" . }}
+      terminationGracePeriodSeconds: 30
+      hostNetwork: {{ .Values.daemonset.hostNetwork }}
+      hostPID: {{ .Values.daemonset.hostPID }}
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: {{ include "clamav.fullname" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+          - /init-unprivileged
+        env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        ports:
+          - containerPort: 3310
+            name: clamd
+            protocol: TCP
+        startupProbe:
+          initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
+          failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+          periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+          tcpSocket:
+            port: clamd
+          timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
+        livenessProbe:
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          tcpSocket:
+            port: clamd
+          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+        readinessProbe:
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          tcpSocket:
+            port: clamd
+          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+        volumeMounts:
+          - name: config
+            mountPath: /etc/clamav
+            readOnly: true
+          - name: clamav-data
+            mountPath: /data
+          {{- range .Values.scan.directories }}
+          - name: vol-{{ . | replace "/" "-" | trimPrefix "-" | trimSuffix "-" }}
+            mountPath: {{ . }}
+          {{- end }}
+          {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            defaultMode: 0640
+            name: {{ include "clamav.fullname" . }}-config
+        - name: clamav-data
+          emptyDir: {}
+        {{- range .Values.scan.directories }}
+        - name: vol-{{ . | replace "/" "-" | trimPrefix "-" | trimSuffix "-" }}
+          hostPath:
+            path: {{ . }}
+        {{- end }}
+        {{- with .Values.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
