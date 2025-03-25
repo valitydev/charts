@@ -1,6 +1,6 @@
 image:
   repository: docker.io/elastic/auditbeat
-  tag: "7.12.1"
+  tag: "8.17.4"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
