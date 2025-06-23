@@ -74,3 +74,35 @@ podToHostAccess: {}
 #  - name: fleet
 #    customLabel: 'app: fleet'
 #    namespace: monitoring
+
+nsAccessPolicy: {}
+#  - namespace: default
+#    fromNamespace: monitoring
+#  - namespace: default
+#    fromNamespace: ingress
+#  - namespace: monitoring
+#    fromNamespace: ingress
+
+podToEntitiesAccess: {}
+#  - name: clickhouse-operator-kubeapi-ent
+#    podLabel: clickhouse-operator
+#    entities:
+#    - kube-apiserver
+#    - remote-node
+#    services:
+#    - k8sService:
+#        namespace: default
+#        serviceName: kubernetes
+#  - name: vault-agent-injector-kubeapi-ent
+#    customLabel: "app.kubernetes.io/name: vault-agent-injector"
+#    entities:
+#    - kube-apiserver
+
+fullAccessPolicy: {}
+#  - name: prometheus
+#    namespace: monitoring
+#    podLabel: prometheus-instance
+
+nsDnsVision: {}
+#  - namespace: default
+#  - namespace: monitoring

@@ -1,9 +1,11 @@
+{{- if .Values.nsDnsVision }}
+{{- range .Values.nsDnsVision }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: dns-allow-egress
-  namespace: {{ .Values.processingNamespace | default .Release.Namespace }}
+  name: dns-allow-egress-{{ .namespace | default $.Release.Namespace }}
+  namespace: {{ .namespace | default $.Release.Namespace }}
 spec:
   podSelector: {}
   policyTypes:
@@ -18,23 +20,5 @@ spec:
       protocol: TCP
     - port: 9153
       protocol: TCP
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: dns-allow-egress
-  namespace: {{ .Values.monitoringNamespace | default "monitoring" }}
-spec:
-  podSelector: {}
-  policyTypes:
-  - Egress
-  egress:
-  - ports:
-    - port: 53
-      protocol: UDP
-    - port: 53
-      protocol: TCP
-    - port: 9153
-      protocol: TCP
-    - port: 9153
-      protocol: TCP
+{{- end }}
+{{- end }}

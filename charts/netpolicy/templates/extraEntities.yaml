@@ -1,12 +1,12 @@
 {{- if .Values.cilium }}
 {{- if .Values.cilium.enabled }}
-{{- if .Values.podToHostAccess }}
-{{- range .Values.podToHostAccess }}
+{{- if .Values.podToEntitiesAccess }}
+{{- range .Values.podToEntitiesAccess }}
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: {{ .name }}-to-host
+  name: {{ .name }}-to-entities
   namespace: {{ .namespace | default $.Release.Namespace }}
 specs:
   - endpointSelector:
@@ -18,7 +18,15 @@ specs:
         {{- end }}
     egress:
     - toEntities:
-        - host
+      {{- with .entities }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+    {{- if .services }}
+    - toServices:
+      {{- with .services }}
+        {{- toYaml . | nindent 6}}
+      {{- end }}
+    {{- end }}
   - endpointSelector:
       matchLabels:
         {{- if .podLabel }}
@@ -28,7 +36,15 @@ specs:
         {{- end }}
     ingress:
     - fromEntities:
-        - host
+      {{- with .entities }}
+        {{- toYaml . | nindent 6}}
+      {{- end }}
+    {{- if .services }}
+    - fromServices:
+      {{- with .services }}
+        {{- toYaml . | nindent 6}}
+      {{- end }}
+    {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

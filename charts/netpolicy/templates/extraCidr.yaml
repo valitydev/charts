@@ -7,6 +7,7 @@ metadata:
   name: {{ .name }}-cidr-policy
   namespace: {{ .namespace | default $.Release.Namespace }}
 spec:
+  {{- if or .podLabel .customLabel }}
   podSelector:
     matchLabels:
       {{- if .podLabel }}
@@ -14,6 +15,9 @@ spec:
       {{- else }}
       {{ .customLabel }}
       {{- end }}
+  {{- else }}
+  podSelector: {}
+  {{- end }}
   policyTypes:
     - Egress
     {{- if .reversed }}
