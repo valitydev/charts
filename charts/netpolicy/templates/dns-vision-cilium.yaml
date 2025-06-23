@@ -1,10 +1,13 @@
 {{- if .Values.cilium }}
 {{- if .Values.cilium.enabled }}
+{{- if .Values.nsDnsVision }}
+{{- range .Values.nsDnsVision }}
+---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: dns-vision.{{ .Values.processingNamespace | default .Release.Namespace }}
-  namespace: {{ .Values.processingNamespace | default .Release.Namespace }}
+  name: dns-vision.{{ .namespace | default $.Release.Namespace }}
+  namespace: {{ .namespace | default $.Release.Namespace }}
 spec:
   endpointSelector:
     {}
@@ -22,5 +25,7 @@ spec:
         rules:
           dns:
             - matchPattern: "*"
+{{- end }}
+{{- end }}
 {{- end }}
 {{- end }}

@@ -1,0 +1,25 @@
+{{- if .Values.fullAccessPolicy }}
+{{ range .Values.fullAccessPolicy }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .name }}-full-access-policy
+  namespace: {{ .namespace | default $.Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- if .podLabel }}
+      selector.cilium/release: {{ .podLabel }}
+      {{- else }}
+      {{ .customLabel }}
+      {{- end }}
+  policyTypes:
+    - Egress
+    - Ingress
+  egress:
+  - {}
+  ingress:
+  - {}
+{{- end }}
+{{- end }}

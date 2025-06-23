@@ -6,7 +6,7 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: extra-{{ .name }}.default
+  name: extra-{{ .name }}.{{ .namespace | default $.Release.Namespace }}
   namespace: {{ .namespace | default $.Release.Namespace }}
 spec:
   {{- if or .podLabel .customLabel }}
@@ -32,12 +32,21 @@ spec:
       - matchPattern: "{{ . }}"
       {{- end }}
       {{- end }}
+    {{- if .ports }}
     toPorts:
       - ports:
-         - port: "80"
-           protocol: TCP
-         - port: "443"
-           protocol: TCP
+        {{- range .ports }}
+        - port: "{{ .port }}"
+          protocol: {{ .type }}
+        {{- end }}
+    {{- else }}
+    toPorts:
+      - ports:
+        - port: "80"
+          protocol: TCP
+        - port: "443"
+          protocol: TCP
+    {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
