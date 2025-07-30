@@ -96,16 +96,28 @@ startupProbe: {}
 ingress:
   enabled: false
   ingressClassName: nginx
+  servicePort: 8022
   annotations: {}
-    # kubernetes.io/tls-acme: "true"
+  tls: []
+    # enabled: false
+    # letsEncrypt:
+    #   enabled: false
+    #   issuer: ""
+    #   internalIssuer: ""
+    # secretName: ""
+  # new format below
+  hostPrefix: ""
+  paths: []
+    # - /v2
+    # - /test
+  rootDomains: []
+    # - example.com
+    # - example.ru
+  namespacedDomain: false
+  # old format below. For backwards capability
   hosts:
     - host: chart-example.local
       paths: []
-  servicePort: 8022
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
 resources: {}
   # limits:

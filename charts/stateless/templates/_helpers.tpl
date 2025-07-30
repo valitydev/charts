@@ -64,3 +64,25 @@ Create configs hash
 {{- define "stateless.configHash" -}}
 {{ print .Values.configMap .Values.secret | sha256sum }}
 {{- end -}}
+
+{{/*
+Build fqdn name for ingress
+*/}}
+{{- define "stateless.ingress.fqdn" -}}
+  {{- if .ctx.Values.ingress.namespacedDomain -}}
+    {{- printf "%s.%s.%s" .ctx.Values.ingress.hostPrefix .ctx.Release.Namespace .domain -}}
+  {{- else -}}
+    {{- printf "%s.%s" .ctx.Values.ingress.hostPrefix .domain -}}
+  {{- end -}}
+{{- end }}
+
+{{/*
+Build secretName for tls
+*/}}
+{{- define "stateless.ingress.secretName" -}}
+  {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.letsEncrypt.enabled -}}
+    {{- printf "%s-%s" .Values.ingress.hostPrefix .Values.ingress.tls.secretName -}}
+  {{- else if .Values.ingress.tls.enabled -}}
+    {{- .Values.ingress.tls.secretName -}}
+  {{- end -}}
+{{- end }}
