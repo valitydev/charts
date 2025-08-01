@@ -41,18 +41,36 @@ spec:
     - host: {{ $host | quote }}
       http:
         paths:
-        {{- range $path := $.Values.ingress.paths }}
+        {{- range $entry := $.Values.ingress.paths }}
+          {{- $parsed := include "stateless.ingress.normalizePath" (dict "entry" $entry "fullName" $fullName "defaultPort" $svcPort) | fromYaml }}
+          {{- $path := index $parsed "path" }}
+          {{- $serviceName := index $parsed "serviceName" }}
+          {{- $portObj := index $parsed "port" }}
+          {{- $portNumber := index $portObj "number" }}
+          {{- $portName := index $portObj "name" }}
           - path: {{ $path }}
             pathType: Prefix
             backend:
               {{- if semverCompare ">=1.19.0-0" $kVer }}
               service:
-                name: {{ $fullName }}
+                name: {{ $serviceName }}
                 port:
+                  {{- if $portNumber }}
+                  number: {{ $portNumber }}
+                  {{- else if $portName }}
+                  name: {{ $portName }}
+                  {{- else }}
                   number: {{ $svcPort }}
+                  {{- end }}
               {{- else }}
-              serviceName: {{ $fullName }}
+              serviceName: {{ $serviceName }}
+              {{- if $portNumber }}
+              servicePort: {{ $portNumber }}
+              {{- else if $portName }}
+              servicePort: {{ $portName }}
+              {{- else }}
               servicePort: {{ $svcPort }}
+              {{- end }}
               {{- end }}
         {{- end }}
   {{- end }}

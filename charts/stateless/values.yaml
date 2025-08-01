@@ -115,7 +115,11 @@ ingress:
   hostPrefix: ""
   paths: []
     # - /v2
-    # - /test
+    # - path: /path1
+    # - path: /path2
+    #   backend:
+    #     serviceName: rule-path1
+    #     servicePort: use-annotation
   rootDomains: []
     # - example.com
     # - example.ru

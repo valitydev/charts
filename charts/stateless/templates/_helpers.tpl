@@ -86,3 +86,36 @@ Build secretName for tls
     {{- .Values.ingress.tls.secretName -}}
   {{- end -}}
 {{- end }}
+
+{{/*
+Normalize a single path entry.
+Input: { entry: <string|map>, fullName: <default service name>, defaultPort: <fallback port> }
+Output: YAML string with keys: path, serviceName, port (contains number or name field)
+*/}}
+{{- define "stateless.ingress.normalizePath" -}}
+  {{- $entry := index . "entry" -}}
+  {{- $fullName := index . "fullName" -}}
+  {{- $defaultPort := index . "defaultPort" -}}
+
+  {{- $path := "/" -}}
+  {{- $serviceName := $fullName -}}
+  {{- $port := dict "number" $defaultPort -}}
+
+  {{- if kindIs "string" $entry }}
+    {{- $path = $entry }}
+  {{- else if kindIs "map" $entry }}
+    {{- $path = ($entry.path | default "/") }}
+  {{- if $entry.backend }}
+    {{- if $entry.backend.serviceName }}{{- $serviceName = $entry.backend.serviceName }}{{- end }}
+    {{- with $entry.backend.servicePort }}
+      {{- if kindIs "string" . }}
+        {{- $port = dict "name" . -}}
+      {{- else if kindIs "int" . }}
+        {{- $port = dict "number" . -}}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+
+  {{- toYaml (dict "path" $path "serviceName" $serviceName "port" $port) | trimSuffix "\n" -}}
+{{- end }}
