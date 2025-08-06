@@ -1,0 +1,77 @@
+{{- if and .Values.ingress.enabled (eq .Values.ingress.ingressClassName "alb") }}
+{{- $fullName := include "stateless.fullname" . }}
+{{- $kVer := .Capabilities.KubeVersion.GitVersion }}
+{{- $svcPort := .Values.ingress.servicePort }}
+
+{{- if semverCompare ">=1.19.0-0" $kVer }}
+apiVersion: networking.k8s.io/v1
+{{- else }}
+apiVersion: networking.k8s.io/v1beta1
+{{- end }}
+kind: Ingress
+
+metadata:
+  name: {{ $fullName }}
+  labels:
+{{ include "stateless.labels" . | indent 4 }}
+  annotations:
+  {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.letsEncrypt.enabled }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.letsEncrypt.issuer }}
+  {{- end }}
+
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName | quote }}
+
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+  {{- range $domain := .Values.ingress.rootDomains }}
+    {{- $host := include "stateless.ingress.fqdn" (dict "ctx" $ "domain" $domain) }}
+    - hosts:
+      - {{ $host | quote }}
+      secretName: {{ include "stateless.ingress.secretName" $ | quote }}
+  {{- end }}
+  {{- end }}
+
+  rules:
+  {{- range $domain := .Values.ingress.rootDomains }}
+    {{- $host := include "stateless.ingress.fqdn" (dict "ctx" $ "domain" $domain) }}
+    - host: {{ $host | quote }}
+      http:
+        paths:
+        {{- range $entry := $.Values.ingress.paths }}
+          {{- $parsed := include "stateless.ingress.normalizePath" (dict "entry" $entry "fullName" $fullName "defaultPort" $svcPort) | fromYaml }}
+          {{- $path := index $parsed "path" }}
+          {{- $serviceName := index $parsed "serviceName" }}
+          {{- $portObj := index $parsed "port" }}
+          {{- $portNumber := index $portObj "number" }}
+          {{- $portName := index $portObj "name" }}
+          - path: {{ $path }}
+            pathType: Prefix
+            backend:
+              {{- if semverCompare ">=1.19.0-0" $kVer }}
+              service:
+                name: {{ $serviceName }}
+                port:
+                  {{- if $portNumber }}
+                  number: {{ $portNumber }}
+                  {{- else if $portName }}
+                  name: {{ $portName }}
+                  {{- else }}
+                  number: {{ $svcPort }}
+                  {{- end }}
+              {{- else }}
+              serviceName: {{ $serviceName }}
+              {{- if $portNumber }}
+              servicePort: {{ $portNumber }}
+              {{- else if $portName }}
+              servicePort: {{ $portName }}
+              {{- else }}
+              servicePort: {{ $svcPort }}
+              {{- end }}
+              {{- end }}
+        {{- end }}
+  {{- end }}
+{{- end }}

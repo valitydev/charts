@@ -64,3 +64,58 @@ Create configs hash
 {{- define "statefull.configHash" -}}
 {{ print .Values.configMap .Values.secret | sha256sum }}
 {{- end -}}
+
+{{/*
+Build fqdn name for ingress
+*/}}
+{{- define "statefull.ingress.fqdn" -}}
+  {{- if .ctx.Values.ingress.namespacedDomain -}}
+    {{- printf "%s.%s.%s" .ctx.Values.ingress.hostPrefix .ctx.Release.Namespace .domain -}}
+  {{- else -}}
+    {{- printf "%s.%s" .ctx.Values.ingress.hostPrefix .domain -}}
+  {{- end -}}
+{{- end }}
+
+{{/*
+Build secretName for tls
+*/}}
+{{- define "statefull.ingress.secretName" -}}
+  {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.letsEncrypt.enabled -}}
+    {{- printf "%s-%s" .Values.ingress.hostPrefix .Values.ingress.tls.secretName -}}
+  {{- else if .Values.ingress.tls.enabled -}}
+    {{- .Values.ingress.tls.secretName -}}
+  {{- end -}}
+{{- end }}
+
+{{/*
+Normalize a single path entry.
+Input: { entry: <string|map>, fullName: <default service name>, defaultPort: <fallback port> }
+Output: YAML string with keys: path, serviceName, port (contains number or name field)
+*/}}
+{{- define "statefull.ingress.normalizePath" -}}
+  {{- $entry := index . "entry" -}}
+  {{- $fullName := index . "fullName" -}}
+  {{- $defaultPort := index . "defaultPort" -}}
+
+  {{- $path := "/" -}}
+  {{- $serviceName := $fullName -}}
+  {{- $port := dict "number" $defaultPort -}}
+
+  {{- if kindIs "string" $entry }}
+    {{- $path = $entry }}
+  {{- else if kindIs "map" $entry }}
+    {{- $path = ($entry.path | default "/") }}
+  {{- if $entry.backend }}
+    {{- if $entry.backend.serviceName }}{{- $serviceName = $entry.backend.serviceName }}{{- end }}
+    {{- with $entry.backend.servicePort }}
+      {{- if kindIs "string" . }}
+        {{- $port = dict "name" . -}}
+      {{- else if kindIs "int" . }}
+        {{- $port = dict "number" . -}}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+
+  {{- toYaml (dict "path" $path "serviceName" $serviceName "port" $port) | trimSuffix "\n" -}}
+{{- end }}
