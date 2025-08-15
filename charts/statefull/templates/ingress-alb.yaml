@@ -27,12 +27,12 @@ spec:
 
   {{- if .Values.ingress.tls.enabled }}
   tls:
+  - hosts:
   {{- range $domain := .Values.ingress.rootDomains }}
-    {{- $host := include "statefull.ingress.fqdn" (dict "ctx" $ "domain" $domain) }}
-    - hosts:
-      - {{ $host | quote }}
-      secretName: {{ include "statefull.ingress.secretName" $ | quote }}
+    {{- $host := include "stateless.ingress.fqdn" (dict "ctx" $ "domain" $domain) }}
+    - {{ $host | quote }}
   {{- end }}
+    secretName: {{ include "stateless.ingress.secretName" $ | quote }}
   {{- end }}
 
   rules:
