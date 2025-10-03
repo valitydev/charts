@@ -11,6 +11,17 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/auditbeat-0.1.0/auditbeat-0.1.0.tgz
     version: 0.1.0
+  cert-manager-sync:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-10-03T09:51:29.774322898Z"
+    description: A Helm chart for cert-manager-sync by @robertlestak
+    digest: 9a8dce5d800075ce95e211a6a483df353b7afeb6597ccae231ba404b7494f8fa
+    name: cert-manager-sync
+    type: application
+    urls:
+    - https://github.com/valitydev/charts/releases/download/cert-manager-sync-0.1.0/cert-manager-sync-0.1.0.tgz
+    version: 0.1.0
   clamav:
   - apiVersion: v2
     appVersion: 1.4.2
@@ -1198,4 +1209,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2025-08-15T09:14:25.164396434Z"
+generated: "2025-10-03T09:51:29.774610643Z"
