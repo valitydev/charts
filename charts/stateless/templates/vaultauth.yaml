@@ -1,0 +1,24 @@
+{{- if .Values.vaultSecret.enabled }}
+{{- $fullName := include "stateless.fullname" . -}}
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  {{- with .Values.vaultSecret.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+{{ include "stateless.labels" . | indent 4 }}
+  name: {{ $fullName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  vaultConnectionRef: {{ .Values.vaultSecret.vaultConnectionRef | default "default" }}
+  method: {{ .Values.vaultSecret.vaultAuthMethodType | default "kubernetes" }}
+  mount: {{  .Values.vaultSecret.vaultAuthMethodMount | default "kubernetes" }}
+  {{- if eq (.Values.vaultSecret.vaultAuthMethodType | default "kubernetes") "kubernetes" }}
+  kubernetes:
+    role: {{ .Values.vaultSecret.vaultAuthRole | default (include "stateless.serviceAccountName" .) }}
+    serviceAccount: {{ .Values.vaultSecret.serviceAccount | default (include "stateless.serviceAccountName" .) }}
+    tokenExpirationSeconds: {{ .Values.vaultSecret.tokenExpirationSeconds | default 600 }}
+  {{- end }}
+{{- end }}

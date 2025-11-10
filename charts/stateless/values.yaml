@@ -227,3 +227,35 @@ cronjob:
     tag: latest
     pullPolicy: IfNotPresent
   args: []
+
+vaultSecret:
+  # Enables vault static secret for the service
+  enabled: false
+  # Annotations for VaultAuth and VaultStaticSecret resources
+  annotations: {}
+  # Reference to the vault connection CR
+  vaultConnectionRef: ""
+  # Type of the auth method (kubernetes, token, etc.)
+  vaultAuthMethodType: ""
+  # Mount point for the auth method
+  vaultAuthMethodMount: ""
+  # Role for the auth method (usually the service account name)
+  vaultAuthRole: ""
+  # Service account for kubernetes auth method
+  serviceAccount: ""
+  # Token expiration time in seconds for kubernetes auth method
+  tokenExpirationSeconds: ""
+  # Reference to the vault auth CR
+  vaultAuthRef: ""
+  # Mount point for secret in vault
+  vaultSecretMount: ""
+  # Type of the secret in vault (kv-v2, kv-v1, etc.)
+  vaultSecretType: ""
+  # Path to the vault secret
+  vaultSecretPath: ""
+  # Refresh interval for the secret (default is 60s)
+  refreshAfter: ""
+  # Name of the transformation template file
+  transformationTemplateName: ""
+  # Transformation for the secret (e.g. template https://developer.hashicorp.com/vault/docs/deploy/kubernetes/vso/secret-transformation#related-api-references)
+  transformation: ""
