@@ -122,7 +122,7 @@ spec:
               app.kubernetes.io/instance: {{ .Release.Name }}
           maxSkew: 1
           topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: DoNotSchedule
+          whenUnsatisfiable: ScheduleAnyway
     {{- end }}
     {{- end }}  {{- if .Values.storage }}
   volumeClaimTemplates:
