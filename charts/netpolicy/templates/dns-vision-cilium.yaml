@@ -20,11 +20,12 @@ spec:
       - ports:
          - port: "53"
            protocol: ANY
-         - port: "9153"
-           protocol: ANY
         rules:
           dns:
             - matchPattern: "*"
+      - ports:
+         - port: "9153"
+           protocol: ANY
 {{- end }}
 {{- end }}
 {{- end }}
