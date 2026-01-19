@@ -97,7 +97,8 @@ spec:
               port: {{ .Values.readinessProbe.httpGet.port }}
           {{- else if .Values.readinessProbe.exec }}  
             exec:
-              command: {{ .Values.readinessProbe.exec.command }}
+              command:
+                {{- toYaml .Values.readinessProbe.exec.command | nindent 14 }}
           {{- end }}
             failureThreshold: 18
             periodSeconds: 10
