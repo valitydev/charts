@@ -1,0 +1,63 @@
+{{- range $entryIngress := .Values.extraIngress }}
+{{- if and $entryIngress.enabled (eq $entryIngress.ingressClassName "alb") }}
+{{- $fullName := include "statefull.fullname" $ }}
+{{- $svcPort := $entryIngress.servicePort }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: {{ $fullName }}-{{ $entryIngress.name }}
+  labels:
+{{ include "statefull.labels" $ | indent 4 }}
+  annotations:
+  {{- with $entryIngress.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if and $entryIngress.tls.enabled $entryIngress.tls.letsEncrypt.enabled }}
+    cert-manager.io/cluster-issuer: {{ $entryIngress.tls.letsEncrypt.issuer }}
+  {{- end }}
+
+spec:
+  ingressClassName: {{ $entryIngress.ingressClassName | quote }}
+
+  {{- if $entryIngress.tls.enabled }}
+  tls:
+  - hosts:
+  {{- range $domain := $entryIngress.rootDomains }}
+    {{- $host := include "statefull.ingress.fqdn" (dict "ctx" $ "domain" $domain) }}
+    - {{ $host | quote }}
+  {{- end }}
+    secretName: {{ $entryIngress.tls.secretName | default (include "statefull.ingress.secretName" $) | quote }}
+  {{- end }}
+
+  rules:
+  {{- range $domain := $entryIngress.rootDomains }}
+    {{- $host := include "statefull.ingress.fqdn" (dict "ctx" $ "domain" $domain) }}
+    - host: {{ $host | quote }}
+      http:
+        paths:
+        {{- range $entry := $entryIngress.paths }}
+          {{- $parsed := include "statefull.ingress.normalizePath" (dict "entry" $entry "fullName" $fullName "defaultPort" $svcPort) | fromYaml }}
+          {{- $path := index $parsed "path" }}
+          {{- $serviceName := index $parsed "serviceName" }}
+          {{- $portObj := index $parsed "port" }}
+          {{- $portNumber := index $portObj "number" }}
+          {{- $portName := index $portObj "name" }}
+          - path: {{ $path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $serviceName }}
+                port:
+                  {{- if $portNumber }}
+                  number: {{ $portNumber }}
+                  {{- else if $portName }}
+                  name: {{ $portName }}
+                  {{- else }}
+                  number: {{ $svcPort }}
+                  {{- end }}
+        {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
