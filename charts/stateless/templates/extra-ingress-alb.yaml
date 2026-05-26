@@ -28,7 +28,7 @@ spec:
     {{- $host := include "stateless.ingress.fqdn" (dict "ctx" $ "domain" $domain) }}
     - {{ $host | quote }}
   {{- end }}
-    secretName: {{ $entryIngress.tls.secretName | default (include "stateless.ingress.secretName" $) | quote }}
+    secretName: {{ $entryIngress.name }}-{{ include "stateless.ingress.secretName" $ }}
   {{- end }}
 
   rules:
