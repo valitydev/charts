@@ -123,6 +123,8 @@ ingress:
     - host: chart-example.local
       paths: []
 
+extraIngress: []
+
 resources: {}
   # limits:
   #   cpu: 100m
