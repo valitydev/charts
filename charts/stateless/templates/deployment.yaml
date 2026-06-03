@@ -150,6 +150,6 @@ spec:
           maxSkew: 1
           minDomains: 2
           topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: ScheduleAnyway
+          whenUnsatisfiable: ScheduleDoNotScheduleAnyway
     {{- end }}
     {{- end }}
