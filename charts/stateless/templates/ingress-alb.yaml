@@ -1,8 +1,14 @@
-{{- if and .Values.ingress.enabled (eq .Values.ingress.ingressClassName "alb") }}
-{{- $fullName := include "stateless.fullname" . }}
-{{- $kVer := .Capabilities.KubeVersion.GitVersion }}
-{{- $svcPort := .Values.ingress.servicePort }}
-
+{{- /* generic ingress resource */ -}}
+{{- define "stateless.ingress.resource" -}}
+{{- $ := .ctx }}
+{{- $ingressName := .name }}
+{{- $secretName := .secretName }}
+{{- $domains := .domains }}
+{{- $annotations := .annotations }}
+{{- $fullName := include "stateless.fullname" $ }}
+{{- $kVer := $.Capabilities.KubeVersion.GitVersion }}
+{{- $svcPort := $.Values.ingress.servicePort }}
+---
 {{- if semverCompare ">=1.19.0-0" $kVer }}
 apiVersion: networking.k8s.io/v1
 {{- else }}
@@ -11,32 +17,32 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 
 metadata:
-  name: {{ $fullName }}
+  name: {{ $ingressName }}
   labels:
-{{ include "stateless.labels" . | indent 4 }}
+{{ include "stateless.labels" $ | indent 4 }}
   annotations:
-  {{- with .Values.ingress.annotations }}
+  {{- with $annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.letsEncrypt.enabled }}
-    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.letsEncrypt.issuer }}
+  {{- if and $.Values.ingress.tls.enabled $.Values.ingress.tls.letsEncrypt.enabled }}
+    cert-manager.io/cluster-issuer: {{ $.Values.ingress.tls.letsEncrypt.issuer }}
   {{- end }}
 
 spec:
-  ingressClassName: {{ .Values.ingress.ingressClassName | quote }}
+  ingressClassName: {{ $.Values.ingress.ingressClassName | quote }}
 
-  {{- if .Values.ingress.tls.enabled }}
+  {{- if $.Values.ingress.tls.enabled }}
   tls:
   - hosts:
-  {{- range $domain := .Values.ingress.rootDomains }}
+  {{- range $domain := $domains }}
     {{- $host := include "stateless.ingress.fqdn" (dict "ctx" $ "domain" $domain) }}
     - {{ $host | quote }}
   {{- end }}
-    secretName: {{ include "stateless.ingress.secretName" $ | quote }}
+    secretName: {{ $secretName | quote }}
   {{- end }}
 
   rules:
-  {{- range $domain := .Values.ingress.rootDomains }}
+  {{- range $domain := $domains }}
     {{- $host := include "stateless.ingress.fqdn" (dict "ctx" $ "domain" $domain) }}
     - host: {{ $host | quote }}
       http:
@@ -75,3 +81,36 @@ spec:
         {{- end }}
   {{- end }}
 {{- end }}
+
+{{- if and .Values.ingress.enabled (eq .Values.ingress.ingressClassName "alb") }}
+
+{{- /* generate main ingess */ -}}
+{{- $mainName := include "stateless.fullname" . }}
+{{- $mainSecret := include "stateless.ingress.secretName" . }}
+{{- include "stateless.ingress.resource" (dict "ctx" . "name" $mainName "secretName" $mainSecret "domains" .Values.ingress.rootDomains "annotations" .Values.ingress.annotations) }}
+{{- end }}
+
+{{- /* generate extra ingess */ -}}
+{{- range $extra := .Values.ingress.extraDomains }}
+  {{- if $extra.enabled }}
+    {{- $extraName := printf "%s-%s" (include "stateless.fullname" $) $extra.name }}
+    {{- $extraSecret := printf "%s-%s" $extra.name (include "stateless.ingress.secretName" $) }}
+    
+    {{- $baseAnnotations := default dict $.Values.ingress.annotations }}
+    
+    {{- $customOverrides := dict }}
+    {{- if $extra.target }}
+      {{- $_ := set $customOverrides "external-dns.alpha.kubernetes.io/target" $extra.target }}
+      {{- $_ := set $customOverrides "external-dns.alpha.kubernetes.io/cloudflare-proxied" "false" }}
+    {{- end }}
+    {{- if $extra.group }}
+      {{- $_ := set $customOverrides "alb.ingress.kubernetes.io/group.name" $extra.group }}
+    {{- end }}
+    
+    {{- $mergedAnnotations := merge $customOverrides $baseAnnotations }}
+    {{- $extraDomainsList := list $extra.domain }}
+
+    {{- include "stateless.ingress.resource" (dict "ctx" $ "name" $extraName "secretName" $extraSecret "domains" $extraDomainsList "annotations" $mergedAnnotations) }}
+  {{- end }}
+{{- end }}
+
