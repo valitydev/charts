@@ -1,6 +1,7 @@
 {{- range $entryIngress := .Values.extraIngress }}
 {{- if and $entryIngress.enabled (eq $entryIngress.ingressClassName "alb") }}
 {{- $fullName := include "statefull.fullname" $ }}
+{{- $svcName := include "statefull.servicename" $ }}
 {{- $svcPort := $entryIngress.servicePort }}
 ---
 apiVersion: networking.k8s.io/v1
@@ -28,7 +29,7 @@ spec:
     {{- $host := include "statefull.ingress.fqdn" (dict "ctx" $ "domain" $domain) }}
     - {{ $host | quote }}
   {{- end }}
-    secretName: {{ $entryIngress.name }}-{{ include "stateless.ingress.secretName" $ }}
+    secretName: {{ $entryIngress.name }}-{{ include "statefull.ingress.secretName" $ }}
   {{- end }}
 
   rules:
@@ -38,7 +39,7 @@ spec:
       http:
         paths:
         {{- range $entry := $entryIngress.paths }}
-          {{- $parsed := include "statefull.ingress.normalizePath" (dict "entry" $entry "fullName" $fullName "defaultPort" $svcPort) | fromYaml }}
+          {{- $parsed := include "statefull.ingress.normalizePath" (dict "entry" $entry "defaultPort" $svcPort "serviceName" $svcName) | fromYaml }}
           {{- $path := index $parsed "path" }}
           {{- $serviceName := index $parsed "serviceName" }}
           {{- $portObj := index $parsed "port" }}

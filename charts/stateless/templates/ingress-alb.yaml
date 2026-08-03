@@ -7,6 +7,7 @@
 {{- $annotations := .annotations }}
 {{- $fullName := include "stateless.fullname" $ }}
 {{- $kVer := $.Capabilities.KubeVersion.GitVersion }}
+{{- $svcName := include "stateless.servicename" $ }}
 {{- $svcPort := $.Values.ingress.servicePort }}
 ---
 {{- if semverCompare ">=1.19.0-0" $kVer }}
@@ -48,7 +49,7 @@ spec:
       http:
         paths:
         {{- range $entry := $.Values.ingress.paths }}
-          {{- $parsed := include "stateless.ingress.normalizePath" (dict "entry" $entry "fullName" $fullName "defaultPort" $svcPort) | fromYaml }}
+          {{- $parsed := include "stateless.ingress.normalizePath" (dict "entry" $entry "defaultPort" $svcPort "serviceName" $svcName) | fromYaml }}
           {{- $path := index $parsed "path" }}
           {{- $serviceName := index $parsed "serviceName" }}
           {{- $portObj := index $parsed "port" }}
