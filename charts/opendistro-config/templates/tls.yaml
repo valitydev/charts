@@ -4,7 +4,6 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: {{ .Values.tls.issuer.name }}
-  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "opendistro.labels" . | nindent 4 }}
 spec:
@@ -15,7 +14,6 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: opensearch-{{ .Values.clusterName }}-node-tls-certs
-  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "opendistro.labels" . | nindent 4 }}
 spec:
@@ -42,7 +40,6 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name:  opensearch-{{ .Values.clusterName }}-admin-cert
-  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "opendistro.labels" . | nindent 4 }}
 spec:

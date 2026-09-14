@@ -3,7 +3,6 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: opensearch-{{ .Values.clusterName }}-securityconfig
-  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "opendistro.labels" . | nindent 4 }}
 type: Opaque

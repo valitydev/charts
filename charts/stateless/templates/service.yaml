@@ -27,33 +27,27 @@ spec:
   selector:
     app.kubernetes.io/name: {{ include "stateless.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+
+{{- if .Values.extraService }}
+{{- range .Values.extraService }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "stateless.fullname" . }}
+  name: {{ .name }}
   labels:
-{{ include "stateless.labels" . | indent 4 }}
-  {{- if or .Values.service.annotations .Values.TopologyAwareRouting.enabled }}
-  annotations:
-    {{- if .Values.TopologyAwareRouting.enabled }}
-    service.kubernetes.io/topology-mode: auto
-    {{- end }}
-    {{- if .Values.service.annotations }}
-    {{- with .Values.service.annotations }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
-    {{- end }}
-  {{- end }}
+{{ include "stateless.labels" $ | indent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .type }}
   ports:
-  {{- range .Values.service.ports }}
+  {{- range .ports }}
     - port: {{ .port }}
       targetPort: {{ .name }}
       protocol: TCP
       name: {{ .name }}
   {{- end }}
   selector:
-    app.kubernetes.io/name: {{ include "stateless.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ include "stateless.name" $ }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+{{- end }}
+{{- end }}

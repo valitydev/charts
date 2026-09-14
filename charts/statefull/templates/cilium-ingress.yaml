@@ -1,7 +1,6 @@
 {{- if .Values.cilium }}
 {{- if .Values.cilium.policy.enabled }}
 {{- $relname := .Release.Name -}}
-{{- $relnamespace := .Release.Namespace -}}
 {{ range .Values.netPolicies }}
   {{- if and (ne .name "s3") (ne .name "kafka") (ne .name "postgres") (ne .name "world") (not (regexMatch "^cidr-.*" .name)) (not (regexMatch "^fqdn-.*" .name)) }}
 ---
@@ -13,7 +12,6 @@ metadata:
   {{- else }}
   name: {{ $relname }}-{{ .name }}-ingress
   {{- end }}
-  namespace: {{ $relnamespace }}
 spec:
   endpointSelector:
     matchLabels:

@@ -6,7 +6,6 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ include "auditbeat.serviceAccountName" . }}
-    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ include "auditbeat.fullname" . }}
