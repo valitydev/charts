@@ -22,7 +22,6 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: {{ include "cert-manager-sync.serviceAccountName" . }}
-  namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ include "cert-manager-sync.fullname" . }}

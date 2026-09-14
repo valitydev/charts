@@ -12,6 +12,14 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+servicenameOverride: ""
+
+extraService: []
+  # - name: extraServiceName
+  #   type: ClusterIP
+  #   ports:
+  #     - name: api
+  #       port: 8022
 
 serviceAccount:
   create: true
