@@ -1,0 +1,26 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "sequin.fullname" . }}-default-deny
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sequin.labels" . | nindent 4 }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+  ingress:
+    # Sequin ↔ state Postgres ↔ Redis.
+    - from:
+        - podSelector: {}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.monitoringNamespace }}
+      ports:
+        - port: {{ .Values.service.metricsPort }}
+          protocol: TCP
+        - port: {{ .Values.service.consolePort }}
+          protocol: TCP
+{{- end }}

@@ -1,0 +1,171 @@
+# Chart defaults. Per-tenant settings live in ../values-<tenant>.yaml.
+#
+# The chart reads three Kubernetes Secrets you create before installing —
+# sequin-source-db, sequin-keys, sequin-destination. See ../README.md.
+
+# Short tenant name. Names every resource (sequin-<tenant>-*), the Sequin
+# account and the sink. Required.
+tenant: ""
+
+image:
+  repository: sequin/sequin
+  # Pinned, not "latest": a moving tag turns every pod restart into an
+  # unplanned upgrade. Bump deliberately.
+  tag: "v0.14.6"
+  pullPolicy: IfNotPresent
+
+env: []
+sequin:
+  # PostgreSQL schema to capture. Required.
+  schema: ""
+
+  # Port of the source database. Static config rather than a secret: Sequin
+  # needs a YAML number here and env substitution would make it a string.
+  sourcePort: 5432
+
+  # Set when the source host is a READ REPLICA (all current tenants are).
+  #
+  # Sequin's liveness heartbeat is pg_logical_emit_message(), which is a WRITE
+  # and fails on a server in recovery. Without this Sequin restarts its slot
+  # processor every ~40s forever. Enabling it points ONLY the heartbeat at the
+  # primary (primary_host in the sequin-source-db Secret); decoding and every
+  # row read stay on the replica.
+  primary:
+    enabled: false
+
+  # Tables to skip, "<schema>.<table>".
+  excludeTables: []
+
+  # Existing replication slot and publication on the SOURCE. Required. The
+  # chart never creates them: an auto-created slot left behind by a failed
+  # deploy retains WAL until the source disk fills.
+  slotName: ""
+  publicationName: ""
+
+  # Concurrent delivery workers. Each row is its own HTTP request to
+  # Cloudflare, so this is the throughput dial. If Cloudflare answers 429,
+  # come down rather than up.
+  workersPerSink: 32
+
+  # Pause replication when the sink buffer fills rather than dropping rows.
+  # The cost: a stuck sink grows the replication slot on the source without
+  # bound — see "Monitor the replication slot" in the README.
+  loadSheddingPolicy: pause_on_full
+
+  logLevel: info
+  telemetryDisabled: true
+
+  # No CPU limit, deliberately. CFS throttling hits hardest exactly when Sequin
+  # is catching up after an outage, and throttled catch-up means a growing
+  # slot on the source. The memory limit stays: an OOM kill is recoverable.
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      memory: 2Gi
+
+  statePostgres:
+    endpoint: ""
+    port: 5432
+    database: ""
+    user: ""
+    url: ""
+  redisName: ""
+
+# The console login (port 7376). Required. Sequin has no other auth: with no
+# user configured it serves an open /register page. Password comes from
+# console_password in the sequin-keys Secret.
+consoleUser:
+  email: ""
+
+# Sequin's own state store: configuration, sink cursors, replication progress.
+# Holds no source data.
+statePostgres:
+  enabled: false
+  # Pinned to a patch release: a pod restart must not move the data directory
+  # to a new minor. Debian variant — the PVC's files are owned by UID 999.
+  image: postgres:16.10
+  # Needs the EBS CSI driver. ../storageclass-gp3.yaml creates this class;
+  # set "" to use the cluster's default class instead.
+  storageClass: gp3
+  storageSize: 20Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+redis:
+  enabled: false
+  image: redis:7.4.7-alpine
+  storageClass: gp3
+  storageSize: 8Gi
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# Applied to Sequin and both state stores.
+nodeSelector: {}
+tolerations: []
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  privileged: false
+  capabilities:
+    drop: ["ALL"]
+
+# The state stores run as the UID baked into their images (999): Postgres
+# refuses to start on a data directory it does not own.
+statePostgresSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 999
+  runAsGroup: 999
+  fsGroup: 999
+  seccompProfile:
+    type: RuntimeDefault
+
+redisSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 999
+  runAsGroup: 999
+  fsGroup: 999
+  seccompProfile:
+    type: RuntimeDefault
+
+# maxUnavailable: 0 on all three single-replica pods. A node drain or cluster
+# upgrade blocks until a human stops the tenant, instead of silently pausing
+# replication. Disable if your upgrade automation cannot tolerate that.
+podDisruptionBudget:
+  enabled: true
+
+# Default-deny ingress for the namespace: only pods in it (Sequin ↔ its state
+# stores) and the monitoring namespace (metrics + console ports) get in. Redis
+# has no password, so keep this on. Enforced only if your CNI enforces
+# NetworkPolicy (VPC CNI: enableNetworkPolicy on the addon).
+networkPolicy:
+  enabled: "false"
+  monitoringNamespace: monitoring
+
+service:
+  consolePort: 7376
+  # Prometheus /metrics.
+  metricsPort: 8376
+
+serviceAccount:
+  create: false
+  name: ""

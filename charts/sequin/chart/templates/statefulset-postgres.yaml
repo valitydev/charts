@@ -1,0 +1,104 @@
+{{- /*
+Sequin's state store: PostgreSQL for configuration, sink cursors and
+replication progress; Redis for coordination. Neither holds source data.
+*/ -}}
+{{- if .Values.statePostgres.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "sequin.statePostgresName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sequin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: state-postgres
+spec:
+  serviceName: {{ include "sequin.statePostgresName" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "sequin.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: state-postgres
+  template:
+    metadata:
+      labels:
+        {{- include "sequin.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: state-postgres
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        {{- toYaml .Values.statePostgresSecurityContext | nindent 8 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: postgres
+          image: {{ .Values.statePostgres.image }}
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: sequin
+            - name: POSTGRES_USER
+              value: sequin
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sequin-keys
+                  key: pg_password
+            # An EBS volume has lost+found at its root; Postgres only
+            # initialises a directory it owns.
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "sequin", "-d", "sequin"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "sequin", "-d", "sequin"]
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            {{- toYaml .Values.statePostgres.resources | nindent 12 }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- with .Values.statePostgres.storageClass }}
+        storageClassName: {{ . }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.statePostgres.storageSize }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sequin.statePostgresName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sequin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: state-postgres
+spec:
+  clusterIP: None
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres
+  selector:
+    {{- include "sequin.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: state-postgres
+{{- end }}

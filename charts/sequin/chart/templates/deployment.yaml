@@ -1,0 +1,177 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sequin.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sequin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: sequin
+spec:
+  # Exactly one. A replication slot has one consumer, so a second pod only adds
+  # a failed attach; Recreate for the same reason — a rolling update would
+  # briefly run two.
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "sequin.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: sequin
+  template:
+    metadata:
+      labels:
+        {{- include "sequin.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: sequin
+      annotations:
+        fluentbit.io/exclude: "true"
+        # Sequin reads sequin.yaml only at boot.
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      # Sequin never calls the Kubernetes API.
+      automountServiceAccountToken: false
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      # Sequin exits 1 at boot if the state Postgres is unreachable, and serves
+      # 500 on /health without ever reconnecting if Redis is. Waiting here turns
+      # a state-store move (EBS detach/attach, minutes) into Init instead of a
+      # CrashLoopBackOff.
+      containers:
+        - name: sequin
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+            readOnlyRootFilesystem: true
+          ports:
+            - name: console
+              containerPort: {{ .Values.service.consolePort }}
+            - name: metrics
+              containerPort: {{ .Values.service.metricsPort }}
+          env:
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            - name: CONFIG_FILE_PATH
+              value: /etc/sequin/sequin.yaml
+            - name: SERVER_PORT
+              value: {{ .Values.service.consolePort | quote }}
+            - name: SEQUIN_METRICS_PORT
+              value: {{ .Values.service.metricsPort | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.sequin.logLevel | quote }}
+            - name: SEQUIN_LOG_FORMAT
+              value: "datadog_json"
+            - name: SEQUIN_TELEMETRY_DISABLED
+              value: {{ .Values.sequin.telemetryDisabled | quote }}
+            - name: DEFAULT_WORKERS_PER_SINK
+              value: {{ .Values.sequin.workersPerSink | quote }}
+            - name: LOAD_SHEDDING_POLICY
+              value: {{ .Values.sequin.loadSheddingPolicy | quote }}
+            # Sequin's own state store, not the source database.
+            - name: PG_HOSTNAME
+              value: "{{ .Values.sequin.statePostgres.endpoint }}"
+            - name: PG_PORT
+              value: "{{ .Values.sequin.statePostgres.port }}"
+            - name: PG_DATABASE
+              value: "{{ .Values.sequin.statePostgres.database }}"
+            - name: PG_USERNAME
+              value: "{{ .Values.sequin.statePostgres.user }}"
+            - name: PG_PASSWORD
+              value: "{{ .Values.sequin.statePostgres.password }}"
+            - name: TEST_PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "sequin.fullname" . }}
+                  key: self_pg_password
+            - name: REDIS_URL
+              value: "{{ .Values.sequin.redisName }}"
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "sequin.fullname" . }}
+                  key: secret_key_base
+            - name: VAULT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "sequin.fullname" . }}
+                  key: vault_key
+            - name: CONSOLE_PASSWORD
+              value: "{{ .Values.consoleUser.password }}"
+
+            # Interpolated into sequin.yaml at boot (${VAR} substitution).
+            - name: SOURCE_PG_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "sequin.fullname" . }}
+                  key: host
+            - name: SOURCE_PG_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "sequin.fullname" . }}
+                  key: database
+            - name: SOURCE_PG_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "sequin.fullname" . }}
+                  key: username
+            - name: SOURCE_PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "sequin.fullname" . }}
+                  key: password
+            {{- if .Values.sequin.primary.enabled }}
+            - name: SOURCE_PG_PRIMARY_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "sequin.fullname" . }}
+                  key: primary_host
+            {{- end }}
+            - name: CLOUDFLARE_STREAM_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "sequin.fullname" . }}
+                  key: stream_endpoint
+            - name: CLOUDFLARE_PIPELINE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "sequin.fullname" . }}
+                  key: token
+          volumeMounts:
+            - name: config
+              mountPath: /etc/sequin
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+          # A restart forced by this probe is curative (Sequin does not
+          # reconnect to Redis on its own), so do not relax failureThreshold.
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: console
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: console
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            {{- toYaml .Values.sequin.resources | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "sequin.fullname" . }}-config
+        - name: tmp
+          emptyDir: {}
