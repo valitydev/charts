@@ -1,0 +1,14 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "sequin.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sequin.labels" . | nindent 4 }}
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- include "sequin.selectorLabels" . | nindent 6 }}
+{{- end }}

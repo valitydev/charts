@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "sequin.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sequin.labels" . | nindent 4 }}
+data:
+  sequin.yaml: |
+    account:
+      name: {{ .Values.tenant | quote }}
+
+    # The console's only credential. Without a user here Sequin serves an open
+    # /register page to anything that reaches port 7376.
+    users:
+      - account: {{ .Values.tenant | quote }}
+        email: {{ required "consoleUser.email is required" .Values.consoleUser.email | quote }}
+        password: "${CONSOLE_PASSWORD}"
+
+    databases:
+      - name: "source"
+        hostname: "${SOURCE_PG_HOST}"
+        # Literal, not "${SOURCE_PG_PORT}": env substitution yields a quoted
+        # string and Sequin wants a number here.
+        port: {{ .Values.sequin.sourcePort }}
+        database: "${SOURCE_PG_DATABASE}"
+        username: "${SOURCE_PG_USERNAME}"
+        password: |-
+          ${SOURCE_PG_PASSWORD}
+        # Both already exist on the source; never create them from here.
+        slot:
+          name: {{ required "sequin.slotName is required" .Values.sequin.slotName | quote }}
+          create_if_not_exists: false
+        publication:
+          name: {{ required "sequin.publicationName is required" .Values.sequin.publicationName | quote }}
+          create_if_not_exists: false
+        {{- if .Values.sequin.primary.enabled }}
+        # The source above is a standby, where pg_logical_emit_message() cannot
+        # run. Sequin uses this connection for the heartbeat and nothing else.
+        primary:
+          hostname: "${SOURCE_PG_PRIMARY_HOST}"
+          port: {{ .Values.sequin.sourcePort }}
+          database: "${SOURCE_PG_DATABASE}"
+          username: "${SOURCE_PG_USERNAME}"
+          password: |-
+            ${SOURCE_PG_PASSWORD}
+        {{- end }}
+        await_database:
+          # A slow path at pod start should retry rather than crash-loop.
+          timeout_ms: 120000
+          interval_ms: 5000
+
+    http_endpoints:
+      - name: "cloudflare-pipeline"
+        url: "${CLOUDFLARE_STREAM_ENDPOINT}"
+        encrypted_headers:
+          - key: "Authorization"
+            value: "Bearer ${CLOUDFLARE_PIPELINE_TOKEN}"
+
+    functions:
+      # Cloudflare's HTTP ingest expects a JSON array of events, so each change
+      # is wrapped in a one-element list. Monthly partition suffixes
+      # (payment_2026_07 -> payment) collapse onto the parent table name, which
+      # is what the pipeline SQL matches on.
+      - name: "cloudflare-pipeline-transform"
+        description: "Wrap each change in a JSON array for Cloudflare Pipelines"
+        type: "transform"
+        code: |-
+          def transform(action, record, changes, metadata) do
+            [%{
+              action: action,
+              record: record,
+              changes: changes,
+              metadata:
+                Map.put(
+                  metadata,
+                  :table_name,
+                  Regex.replace(~r/_\d{4}_\d{2}$/, metadata.table_name, "")
+                )
+            }]
+          end
+
+    sinks:
+      - name: {{ printf "%s-to-pipeline" .Values.tenant | quote }}
+        database: "source"
+        status: "active"
+        transform: "cloudflare-pipeline-transform"
+        source:
+          include_schemas:
+            - {{ required "sequin.schema is required" .Values.sequin.schema | quote }}
+          {{- with .Values.sequin.excludeTables }}
+          exclude_tables:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        actions: [insert, update, delete]
+        # No max_retry_count: a rejected message is retried indefinitely so
+        # nothing is silently dropped. The cost is that a poison message stalls
+        # the slot and grows WAL on the source — which is why the README asks
+        # you to alarm on replication slot lag.
+        destination:
+          type: "webhook"
+          http_endpoint: "cloudflare-pipeline"
+          # Sequin's batch mode wraps messages in {"data": [...]}; Cloudflare
+          # wants a bare array. The transform emits the array, so batching stays
+          # off and throughput comes from sequin.workersPerSink.
+          batch: false

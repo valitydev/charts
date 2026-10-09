@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sequin.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sequin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: sequin
+spec:
+  type: ClusterIP
+  ports:
+    # Web console. Not exposed; reach it with
+    # kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "sequin.fullname" . }} 7376:7376
+    - name: console
+      port: {{ .Values.service.consolePort }}
+      targetPort: console
+    - name: metrics
+      port: {{ .Values.service.metricsPort }}
+      targetPort: metrics
+  selector:
+    {{- include "sequin.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: sequin

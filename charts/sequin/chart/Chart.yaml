@@ -1,0 +1,7 @@
+apiVersion: v2
+name: sequin
+description: Sequin CDC — streams one PostgreSQL schema to a Cloudflare Pipelines stream
+type: application
+version: 1.0.0
+# Kept in step with values.yaml image.tag.
+appVersion: "v0.14.6"
