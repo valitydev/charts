@@ -544,6 +544,15 @@ entries:
   raw:
   - apiVersion: v1
     appVersion: "1.0"
+    created: "2026-10-15T09:59:31.915059394Z"
+    description: A Helm chart for configmaps and secrets usefull for vality services
+    digest: 1d2078b968f50f8bb64e6a00ce102470689f9eb6ce5eaa9aab1289449b929ad3
+    name: raw
+    urls:
+    - https://github.com/valitydev/charts/releases/download/raw-1.0.11/raw-1.0.11.tgz
+    version: 1.0.11
+  - apiVersion: v1
+    appVersion: "1.0"
     created: "2024-12-17T14:08:38.339276933Z"
     description: A Helm chart for configmaps and secrets usefull for vality services
     digest: e390d30646a1e7c036aa935a5129e1e1d08e6b6723bd06d970bff517acdf0106
@@ -1381,4 +1390,4 @@ entries:
     urls:
     - https://github.com/valitydev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
     version: 1.0.1
-generated: "2026-06-22T11:50:11.331001548Z"
+generated: "2026-10-15T09:59:31.915307631Z"
