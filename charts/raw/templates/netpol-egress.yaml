@@ -1,0 +1,91 @@
+{{- if and .Values.netPolicies .Values.netpolicy .Values.netpolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-egress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "raw.labels" $ | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      selector.cilium/release: {{ .Release.Name }}
+  policyTypes:
+  - Egress
+  egress:
+  {{- range .Values.netPolicies }}
+    {{- if and (eq .name "postgres") $.Values.services.postgres.external }}
+  - to:
+      {{- range $.Values.services.postgres.cidrs }}
+    - ipBlock:
+        cidr: {{ . }}
+      {{- end }}
+    ports:
+    - protocol: TCP
+      port: {{ $.Values.services.postgres.port | default "5432" }}
+    {{- else if and (eq .name "kafka") $.Values.services.kafka.external }}
+  - to:
+      {{- range $.Values.services.kafka.cidrs }}
+      - ipBlock:
+          cidr: {{ . }}
+      {{- end }}
+    ports:
+    - protocol: TCP
+      port: 9092
+    - protocol: TCP
+      port: 9094
+    - protocol: TCP
+      port: 9096
+    - protocol: TCP
+      port: 9098
+    - protocol: TCP
+      port: 2181
+    {{- else if eq .name "s3" }}
+  - to:
+      {{- range $.Values.services.s3.cidrs }}
+      - ipBlock:
+          cidr: {{ . }}
+      {{- end }}
+    {{- else if (regexMatch "^cidr-.*" .name) }}
+  - to:
+      {{- range .cidrs }}
+      - ipBlock:
+          cidr: {{ . }}
+      {{- end }}
+      {{- if .filters }}
+    ports:
+        {{- range .filters }}
+    - protocol: {{ .type }}
+      port: {{ .port }}
+          {{- if .endPort }}
+      endPort: {{ .endPort }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- else if and (ne .name "world") (not (regexMatch "^fqdn-.*" .name)) }}
+  - to:
+    - podSelector:
+        matchLabels:
+          {{- if .group }}
+          selector.cilium/group: {{ .group }}
+          {{- else }}
+          selector.cilium/release: {{ .name }}
+          {{- end }}
+      {{- if .namespace }}
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ .namespace | default $.Release.Namespace }}
+      {{- end }}
+      {{- if .filters }}
+    ports:
+        {{- range .filters }}
+    - protocol: {{ .type }}
+      port: {{ .port }}
+          {{- if .endPort }}
+      endPort: {{ .endPort }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
