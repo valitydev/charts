@@ -6,12 +6,28 @@ configMap: {}
 #  data: {}
 #  binaryData: {}
 
+serviceAccount:
+  create: false
+  # name: ""
+  # annotations: {}
+  # automountServiceAccountToken: false
+
 cronjob:
   enabled: false
   # schedule: "0 1 * * *"
+  # suspend: false
+  # successfulJobsHistoryLimit: 1
+  # failedJobsHistoryLimit: 1
   # image: {}
   # command: []
   # args: []
+  # envFromConfigs: false # mount configMap and secret of this release as envFrom
+  # env: []
+  # resources: {}
+  # podLabels: {}
+  # podAnnotations: {}
+  # podSecurityContext: {}
+  # securityContext: {}
   # restartPolicy: OnFailure
   # nodeSelector: {}
   # affinity: {}
@@ -58,3 +74,22 @@ hook:
   volumes: []
   volumeMounts: []
   extraEnv: {}
+
+netpolicy:
+  enabled: false
+cilium:
+  enabled: false
+  policy:
+    enabled: false
+# Policies are rendered only when this list is not empty
+netPolicies: []
+#  - name: some-release
+#    filters:
+#      - port: 8022
+#        type: TCP
+#  - name: fqdn-example
+#    matchName:
+#      - example.com
+#    filters:
+#      - port: 443
+#        type: TCP

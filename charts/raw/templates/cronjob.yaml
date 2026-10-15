@@ -7,8 +7,11 @@ metadata:
     {{- include "raw.labels" . | nindent 4 }}
 spec:
   schedule: "{{ .Values.cronjob.schedule }}"
-  successfulJobsHistoryLimit: 1
-  failedJobsHistoryLimit: 1
+  {{- if hasKey .Values.cronjob "suspend" }}
+  suspend: {{ .Values.cronjob.suspend }}
+  {{- end }}
+  successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit | default 1 }}
+  failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit | default 1 }}
   concurrencyPolicy: Forbid
   {{- if .Values.cronjob.startingDeadlineSeconds }}
   startingDeadlineSeconds: {{ .Values.cronjob.startingDeadlineSeconds }}
@@ -18,25 +21,66 @@ spec:
       {{- if .Values.cronjob.activeDeadlineSeconds }}
       activeDeadlineSeconds: {{ .Values.cronjob.activeDeadlineSeconds }}
       {{- end }}
-      backoffLimit: {{ .Values.cronjob.backoffLimit | default 3 }}
+      backoffLimit: {{ hasKey .Values.cronjob "backoffLimit" | ternary .Values.cronjob.backoffLimit 3 }}
       template:
         metadata:
           labels:
             selector.cilium/release: {{ .Release.Name }}
+            {{- with .Values.cronjob.podLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- with .Values.cronjob.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
         spec:
           {{- with .Values.imagePullSecrets }}
           imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if or .Values.serviceAccount.create .Values.serviceAccount.name }}
+          serviceAccountName: {{ include "raw.serviceAccountName" . }}
+          {{- end }}
+          {{- if hasKey .Values.serviceAccount "automountServiceAccountToken" }}
+          automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+          {{- end }}
+          {{- with .Values.cronjob.podSecurityContext }}
+          securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           containers:
             - name: {{ .Release.Name }}-cj
               image: "{{ .Values.cronjob.image.repository }}:{{ .Values.cronjob.image.tag | default .Chart.AppVersion }}"
               imagePullPolicy: {{ .Values.cronjob.image.pullPolicy }}
-              {{- if .Values.cronjob.command }}
-              command: {{ .Values.cronjob.command }}
+              {{- with .Values.cronjob.command }}
+              command:
+                {{- toYaml . | nindent 16 }}
               {{- end }}
               args:
                 {{- toYaml .Values.cronjob.args | nindent 16 }}
+              {{- if and .Values.cronjob.envFromConfigs (or .Values.configMap .Values.secret) }}
+              envFrom:
+                {{- if .Values.configMap }}
+                - configMapRef:
+                    name: {{ include "raw.fullname" . }}
+                {{- end }}
+                {{- if .Values.secret }}
+                - secretRef:
+                    name: {{ include "raw.fullname" . }}
+                {{- end }}
+              {{- end }}
+              {{- with .Values.cronjob.env }}
+              env:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              {{- with .Values.cronjob.securityContext }}
+              securityContext:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              {{- with .Values.cronjob.resources }}
+              resources:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
               {{- with .Values.cronjob.volumeMounts }}
               volumeMounts:
                 {{- toYaml . | nindent 16 }}
@@ -58,6 +102,4 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           restartPolicy: {{ .Values.cronjob.restartPolicy | default "OnFailure" }}
-          successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit | default 1 }}
-          failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit | default 1 }}
 {{- end }}
