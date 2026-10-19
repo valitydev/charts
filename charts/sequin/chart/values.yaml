@@ -14,7 +14,7 @@ image:
   tag: "v0.14.6"
   pullPolicy: IfNotPresent
 
-env: []
+extraEnv: []
 sequin:
   # PostgreSQL schema to capture. Required.
   schema: ""
