@@ -1,0 +1,170 @@
+{{- if .Values.rollouts.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ include "stateless.fullname" . }}
+  labels:
+{{ include "stateless.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.rollouts.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "stateless.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  strategy:
+    canary:
+      canaryService: {{ include "stateless.fullname" . }}-canary
+      stableService: {{ include "stateless.fullname" . }}-stable
+      trafficRouting:
+        plugins:
+          argoproj-labs/gatewayAPI:
+            namespace: {{ .Release.Namespace }}
+            httpRoutes:
+            {{- range .Values.service.ports }}
+            {{- if eq (toString .canary) "enabled" }}
+              - name: {{ include "stateless.fullname" $ }}-{{ .name }}-route
+            {{- end }}
+            {{- end }}
+      steps:
+        {{- toYaml .Values.rollouts.steps | nindent 8 }}
+  template:
+    metadata:
+      labels:
+        {{ include "stateless.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+      {{- if or .Values.configMap .Values.secret }}
+        config/checksum: {{ include "stateless.configHash" . }}
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ template "stateless.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+    {{- if or .Values.extraInitContainers .Values.apiInitContainers.enabled }}
+      initContainers:
+    {{- if .Values.apiInitContainers.enabled }}
+        - name: fetch-keycloack-pubkey
+          image: {{ .Values.apiInitContainers.image | default "ghcr.io/valitydev/busybox:1.32" }}
+          env:
+          - name: TARGET
+            value: "/var/keycloak/keycloak.pubkey.pem"
+          {{- with .Values.apiInitContainers.env }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+          command:
+            - /bin/sh
+            - -c
+            - /opt/keycloak/fetch-keycloak-pubkey.sh
+          volumeMounts:
+            - name: config-volume
+              mountPath: /opt/keycloak/fetch-keycloak-pubkey.sh
+              subPath: fetchKeycloakPubkey
+              readOnly: true
+            - name: keycloak-pubkey
+              mountPath: /var/keycloak
+    {{- end }}
+    {{- with .Values.extraInitContainers }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+      containers:
+        - name: {{ .Release.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          {{- with .Values.env }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+          ports:
+          {{- range .Values.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+              protocol: TCP
+          {{- end }}
+        {{- if .Values.runopts.command }}
+          command: {{ .Values.runopts.command}}
+        {{- with .Values.runopts.args }}
+          args:
+            {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.readinessProbe }}
+          startupProbe:
+          {{- if .Values.readinessProbe.httpGet }}
+            httpGet:
+              path: {{ .Values.readinessProbe.httpGet.path }}
+              port: {{ .Values.readinessProbe.httpGet.port }}
+          {{- else if .Values.readinessProbe.exec }}
+            exec:
+              command:
+                {{- toYaml .Values.readinessProbe.exec.command | nindent 14 }}
+          {{- end }}
+            failureThreshold: 18
+            periodSeconds: 10
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+        {{- end }}
+        {{- if .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+        {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+    {{- with .Values.sidecarContainers }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if or .Values.topologySpreadConstraints .Values.topologySpreadConstraintsRequired.enabled }}
+      topologySpreadConstraints:
+    {{- if .Values.topologySpreadConstraints }}
+    {{- with .Values.topologySpreadConstraints }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- end }}
+    {{- if .Values.topologySpreadConstraintsRequired.enabled }}
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+          matchLabelKeys:
+          - pod-template-hash
+          maxSkew: 1
+          minDomains: 2
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+    {{- end }}
+    {{- end }}
+{{- end }}
