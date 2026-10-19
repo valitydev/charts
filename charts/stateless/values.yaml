@@ -67,8 +67,10 @@ service:
   ports:
     - name: api
       port: 8022
+      canary: false
     # - name: api
     #   port: 8080
+    #   canary: enabled
 
 runopts:
   command: []
@@ -171,6 +173,17 @@ logs:
 
 TopologyAwareRouting:
   enabled: false
+
+rollouts:
+  enabled: false
+  revisionHistoryLimit: 2
+  steps:
+    - setWeight: 25
+    - pause: {}
+    - setWeight: 50
+    - pause: {}
+    - setWeight: 75
+    - pause: {}
 
 netPolicies: []
 # - name: consul

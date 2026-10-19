@@ -1,3 +1,4 @@
+{{- if not .Values.rollouts.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -153,3 +154,4 @@ spec:
           whenUnsatisfiable: DoNotSchedule
     {{- end }}
     {{- end }}
+{{- end }}

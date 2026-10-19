@@ -1,0 +1,30 @@
+{{- if .Values.rollouts.enabled }}
+{{- $fullName := include "stateless.fullname" . }}
+{{- range .Values.service.ports }}
+{{- if eq (toString .canary) "enabled" }}
+---
+kind: HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1
+metadata:
+  name: {{ $fullName }}-{{ .name }}-route
+  labels:
+{{ include "stateless.labels" $ | indent 4 }}
+spec:
+  parentRefs:
+    - kind: Service
+      name: {{ $fullName }}
+      group: ""
+      port: {{ .port }}
+  rules:
+    - backendRefs:
+        - name: {{ $fullName }}-stable
+          kind: Service
+          port: {{ .port }}
+          weight: 100
+        - name: {{ $fullName }}-canary
+          kind: Service
+          port: {{ .port }}
+          weight: 0
+{{- end }}
+{{- end }}
+{{- end }}
