@@ -16,9 +16,6 @@ spec:
   endpoints:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  namespaceSelector:
-    matchNames:
-      - "{{ $.Release.Namespace }}"
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "statefull.name" . }}

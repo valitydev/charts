@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "statefull.fullname" . }}-headless
+  name: {{ include "statefull.servicename" . }}-headless
   labels:
 {{ include "statefull.labels" . | indent 4 }}
     headless: "true"

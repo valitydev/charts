@@ -4,7 +4,6 @@ kind: Service
 apiVersion: v1
 metadata:
   name: {{ .name }}
-  namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "opendistro.labels" $ | nindent 4 }}
 {{- if .labels }}
